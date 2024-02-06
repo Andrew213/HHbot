@@ -1,10 +1,10 @@
 {
     "compilerOptions": {
         "importHelpers": true,
-        "target": "es6",
-        "module": "commonjs",
-        "outDir": "dist",
+        "module": "es2022",
         "moduleResolution": "node",
+        "target": "es5",
+        "outDir": "dist",
         "noImplicitAny": false,
         "jsx": "preserve",
         "noUnusedLocals": false,
@@ -19,6 +19,5 @@
         "typeRoots": ["./@types", "node_modules/@types"],
         "baseUrl": "."
     },
-    "include": ["scripts"],
     "exclude": ["node_modules", "**/*.spec.ts"]
 }

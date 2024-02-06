@@ -1,1 +1,1 @@
-const testb = 'b';
+import server from './app';
