@@ -4,6 +4,8 @@ module.exports = {
         'eslint-plugin',
         '@typescript-eslint',
         'import',
+        'react',
+        'react-hooks',
         'eslint-comments'
     ],
     env: {
