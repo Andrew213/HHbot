@@ -3,6 +3,6 @@
     "compilerOptions": {
         "outDir": "../dist",
         "rootDir": "..",
-        "target": "es2017"
+        "target": "ESNext"
     }
 }

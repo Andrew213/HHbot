@@ -1,7 +1,7 @@
 import express, { Express } from 'express';
 import { queryParser } from './controllers';
 import { render } from './middlewares';
-
+import router from 'server/router';
 const server: Express = express();
 
 server
@@ -23,6 +23,7 @@ server
         Добавляю парсер url
      */
     .set('query parser', queryParser)
-    .use(render);
+    .use(render)
+    .use(router);
 
 export default server;

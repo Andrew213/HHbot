@@ -6,7 +6,6 @@ interface Options {
 
 export default ({ isSSR }: Options) =>
     webpackConfig => {
-        console.log(`AAAASD`);
         // ------------------------------------
         // TypeScript
         // ------------------------------------

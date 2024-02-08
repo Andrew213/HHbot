@@ -1,6 +1,6 @@
-import keysTransformer from 'ts-transformer-keys/transformer';
+// import keysTransformer from 'ts-transformer-keys/transformer';
 import createStyledComponentsTransformer from 'typescript-plugin-styled-components';
-import webpack, { RuleSetUseItem } from 'webpack';
+import { RuleSetUseItem } from 'webpack';
 
 import { ENVS } from '../assets/env';
 
@@ -23,8 +23,8 @@ export default {
                     transpileOnly: true,
                     getCustomTransformers: program => ({
                         before: [
-                            createStyledComponentsTransformer(),
-                            keysTransformer(program)
+                            createStyledComponentsTransformer()
+                            // keysTransformer(program)
                         ]
                     })
                 }

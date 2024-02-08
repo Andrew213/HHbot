@@ -4,8 +4,6 @@ export function findIP(): string | null {
     const nets = networkInterfaces();
     let result: string | null = null;
 
-    console.log(`nets `, nets);
-
     for (const name of Object.keys(nets)) {
         for (const net of nets[name]!) {
             if (

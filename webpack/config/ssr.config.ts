@@ -12,7 +12,7 @@ const cfg = require('../../lib/cfg').default;
 
 console.log(`CFG `, cfg);
 function getConfig(lang: string): webpack.Configuration {
-    return flow([
+    return flow(
         initServerConfig({
             entry: {
                 app: join(
@@ -26,7 +26,7 @@ function getConfig(lang: string): webpack.Configuration {
         }),
         loadScripts({ isSSR: true }),
         loadStyles({ isSSR: true })
-    ])({});
+    )({});
 }
 
 export default cfg.default.langs.map(getConfig);

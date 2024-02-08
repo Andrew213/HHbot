@@ -28,7 +28,10 @@ export default ({ entry, lang }) =>
             ],
             resolve: {
                 extensions: ['.js', '.ts', '.tsx', '.json'],
-                plugins: [new TsconfigPathsPlugin()]
+                plugins: [new TsconfigPathsPlugin()],
+                fallback: {
+                    url: require.resolve('url/')
+                }
             },
             output: {
                 filename: `ssr.bundles.${lang}.js`,

@@ -1,9 +1,9 @@
 import mergeOptions from 'merge-options';
 import path from 'path';
-import { packageDirectorySync } from 'pkg-dir';
+import pkgDir from 'pkg-dir';
 
 const CONFIG_DIR =
-    process.env.CFG_DIR || path.join(packageDirectorySync() || '', 'configs');
+    process.env.CFG_DIR || path.join(pkgDir.sync() || '', 'configs');
 const ENV = process.env.CONFIG_ENV || process.env.NODE_ENV;
 
 let defaultConfig;

@@ -26,13 +26,13 @@ if (isDev) {
 
 export function startApp({ server }: Options) {
     if (isDev) {
-        const pem = readFileSync(
-            resolve(`${homedir()}/.certs`, 'dev.pem'),
-            'utf8'
-        );
+        // const pem = readFileSync(
+        //     resolve(`${homedir()}/.certs`, 'dev.pem'),
+        //     'utf8'
+        // );
 
-        console.log(`homeDir `, homedir);
-        console.log(`pem `, pem);
+        // console.log(`homeDir `, homedir);
+        // console.log(`pem `, pem);
 
         server.listen(PORT, () => {
             console.log(
