@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet';
 
 import Hello from 'client/pages/hello';
 
-const Wrapper = () => {
+const Wrapper = ({ data }) => {
     return (
         <>
             <Helmet>
@@ -11,7 +11,7 @@ const Wrapper = () => {
                 <meta name="title" content="ssr" />
             </Helmet>
 
-            <Hello />
+            <Hello data={data} />
         </>
     );
 };

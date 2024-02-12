@@ -33,6 +33,7 @@ export default ({ lang, index }) =>
             mode: __DEV__ ? 'development' : 'production',
             output: {
                 filename: `[name].bundle.${lang}.js`,
+                // https://webpack.js.org/configuration/output/#outputlibrary
                 library: 'Client',
                 libraryTarget: 'var',
                 publicPath: __DEV__

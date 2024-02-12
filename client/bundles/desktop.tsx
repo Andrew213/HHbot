@@ -1,13 +1,11 @@
 import React from 'react';
-import { hydrate } from 'react-dom';
+import { hydrateRoot } from 'react-dom/client';
 import { Helmet } from 'react-helmet';
 import { hot } from 'react-hot-loader/root';
 
 import Core from 'client/pages/core';
 
 const Bundle = props => {
-    console.log(`props `, props);
-
     return (
         <>
             <Helmet>
@@ -25,5 +23,8 @@ const Bundle = props => {
 export const DesktopBundle = hot(Bundle);
 
 export default data => {
-    hydrate(<DesktopBundle data={data} />, document.getElementById('root'));
+    hydrateRoot(
+        document.getElementById('root') as HTMLElement,
+        <DesktopBundle data={data} />
+    );
 };
