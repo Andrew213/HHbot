@@ -21,21 +21,6 @@ function getWebpackMiddlewares(
     ];
 }
 
-console.log(`IN SERVER/MIDDLEWARES/HOT.TS`);
-
-const foo = [
-    ...webpackConfigs.reduce(
-        (middlewares, config, index) => [
-            ...middlewares,
-            ...getWebpackMiddlewares(config, index)
-        ],
-        []
-    ),
-    render
-];
-
-console.log(`foo `, foo);
-
 export default [
     ...webpackConfigs.reduce(
         (middlewares, config, index) => [

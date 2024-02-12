@@ -23,6 +23,4 @@ function getConfig(lang: string, index: number): webpack.Configuration {
     ])({});
 }
 
-console.log(`CFFG `, cfg);
-
 export default cfg.default.langs.map(getConfig);

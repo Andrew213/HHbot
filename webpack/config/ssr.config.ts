@@ -10,9 +10,12 @@ config();
 
 const cfg = require('../../lib/cfg').default;
 
-console.log(`CFG `, cfg);
 function getConfig(lang: string): webpack.Configuration {
-    return flow(
+    console.log(
+        `ENTRY PATH IN ssr.config.ts `,
+        join(ROOT_DIR_FROM_WEBPACK, 'client', 'bundles', 'index.ts')
+    );
+    return flow([
         initServerConfig({
             entry: {
                 app: join(
@@ -26,7 +29,7 @@ function getConfig(lang: string): webpack.Configuration {
         }),
         loadScripts({ isSSR: true }),
         loadStyles({ isSSR: true })
-    )({});
+    ])({});
 }
 
 export default cfg.default.langs.map(getConfig);

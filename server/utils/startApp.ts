@@ -5,7 +5,7 @@ import https from 'https';
 import { homedir } from 'os';
 import { resolve } from 'path';
 import { findIP } from './network';
-
+import Loadable from 'react-loadable';
 interface Options {
     server: Express;
 }
@@ -25,20 +25,14 @@ if (isDev) {
 }
 
 export function startApp({ server }: Options) {
-    if (isDev) {
-        // const pem = readFileSync(
-        //     resolve(`${homedir()}/.certs`, 'dev.pem'),
-        //     'utf8'
-        // );
-
-        // console.log(`homeDir `, homedir);
-        // console.log(`pem `, pem);
-
-        server.listen(PORT, () => {
-            console.log(
-                `SERVER STARTED `,
-                APP_HOSTS.concat(...devHosts.map(({ host }) => host))
-            );
-        });
-    }
+    Loadable.preloadAll().then(() => {
+        if (isDev) {
+            server.listen(PORT, () => {
+                console.log(
+                    `SERVER STARTED `,
+                    APP_HOSTS.concat(...devHosts.map(({ host }) => host))
+                );
+            });
+        }
+    });
 }

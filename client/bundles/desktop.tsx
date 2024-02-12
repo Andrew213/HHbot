@@ -6,6 +6,8 @@ import { hot } from 'react-hot-loader/root';
 import Core from 'client/pages/core';
 
 const Bundle = props => {
+    console.log(`props `, props);
+
     return (
         <>
             <Helmet>
@@ -15,7 +17,6 @@ const Bundle = props => {
                     content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"
                 />
             </Helmet>
-
             <Core {...props.data} />
         </>
     );

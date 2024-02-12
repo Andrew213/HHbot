@@ -7,7 +7,8 @@ const config: AppConfig = {
     },
 
     static: {
-        baseUrl: '/static/'
+        baseUrl: '/static/',
+        version: ''
     }
 };
 

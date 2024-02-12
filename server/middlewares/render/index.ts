@@ -1,6 +1,12 @@
 import cfg from '../../../lib/cfg';
-import render from './render';
-import hot from './hot';
+// import render from './render';
+// import hot from './hot';
+console.log('\n\n\n INSIDE1 server/middlewares/render/index.ts', cfg);
 
-const isHot = cfg?.render?.isHot;
-export default isHot ? hot : render;
+if (cfg.render && cfg.render.isHot) {
+    console.log('\n\n\n INSIDE server/middlewares/render/index.ts', cfg);
+}
+
+export default cfg.default.render && cfg.default.render.isHot
+    ? require('./hot').default
+    : require('./render').default;

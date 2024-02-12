@@ -38,9 +38,6 @@ export default ({ entry, lang }) =>
                 libraryTarget: 'commonjs2',
                 path: join(ROOT_DIR_FROM_WEBPACK, 'dist'),
                 publicPath: '/static/'
-                // publicPath: ENVS.__DEV__
-                //     ? '/static/'
-                //     : `https://storage.yandexcloud.net/path/to/S3/${process.env.APP_VERSION}/client/`
             },
             module: { rules: [] },
             stats: {
@@ -60,19 +57,11 @@ export default ({ entry, lang }) =>
                 new webpack.DefinePlugin(
                     merge(GLOBAL_ARGS, {
                         'process.env': {
-                            // DADATA_TOKEN: JSON.stringify(DADATA_TOKEN),
                             LANG: JSON.stringify(lang),
                             APP_SIDE: 'server'
                         }
                     })
                 )
-                // new webpack.ProvidePlugin({
-                //     window: resolve(join(__dirname, '../mock/window.mock')),
-                //     localStorage: resolve(
-                //         join(__dirname, '../mock/localStorage.mock')
-                //     ),
-                //     document: 'global/document'
-                // })
             ]
         });
         return webpackConfig;

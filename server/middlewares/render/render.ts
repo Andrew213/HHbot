@@ -13,24 +13,13 @@ export default (req: Request, res: Resp, next: NextFunction) => {
     res.renderBundle = (bundleName: string, data: {}) => {
         console.log('\n\n\n\nIN SERVER/MIDDLEWARES/RENDER/RENDER.TS 2\n\n\n\n');
 
-        // const location = req.url;
+        const location = req.url;
 
-        // renderBundle({ bundleName, data, location });
+        console.log(`location `, location);
 
-        res.send(`<!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <base href="/">
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1">
-            <title>Tail</title>
-        </head>
-        <body>
-            <noscript>You need to enable JavaScript to run this app.</noscript>
-            <h1 id="h1">Hello from asd</h1>
-            
-        </body>
-        </html>`);
+        const { html } = renderBundle({ bundleName, data, location });
+
+        res.send(html);
     };
 
     next();
