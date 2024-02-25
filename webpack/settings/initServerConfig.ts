@@ -53,7 +53,11 @@ export default ({ entry, lang }) =>
             performance: {
                 hints: false
             },
+
             plugins: [
+                new webpack.ProvidePlugin({
+                    window: resolve(join(__dirname, '../mock/window.mock.ts'))
+                }),
                 new webpack.DefinePlugin(
                     merge(GLOBAL_ARGS, {
                         'process.env': {

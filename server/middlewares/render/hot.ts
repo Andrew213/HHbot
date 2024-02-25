@@ -15,7 +15,8 @@ function getWebpackMiddlewares(
 
     return [
         devMiddleware(compiler, {
-            publicPath: config.output!.publicPath!
+            publicPath: config.output!.publicPath!,
+            serverSideRender: true
         }),
         hotMiddleware(compiler, { path: `/__webpack_hmr_${index}` })
     ];

@@ -2,7 +2,9 @@ import React from 'react';
 import { hydrateRoot } from 'react-dom/client';
 import { Helmet } from 'react-helmet';
 import { hot } from 'react-hot-loader/root';
+import { Provider } from 'react-redux';
 
+import store from 'client/utils/infrastructure/store';
 import Core from 'client/pages/core';
 
 const Bundle = props => {
@@ -25,6 +27,8 @@ export const DesktopBundle = hot(Bundle);
 export default data => {
     hydrateRoot(
         document.getElementById('root') as HTMLElement,
-        <DesktopBundle data={data} />
+        <Provider store={store}>
+            <DesktopBundle data={data} />
+        </Provider>
     );
 };

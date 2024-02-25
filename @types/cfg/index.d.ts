@@ -1,3 +1,5 @@
+import { HelmetOptions } from 'helmet';
+
 declare module 'cfg' {
     interface Config {
         /** API settings */
@@ -17,7 +19,7 @@ declare module 'cfg' {
          * Source code:
          * https://github.com/helmetjs/helmet
          */
-        helmet?: {};
+        helmet?: HelmetOptions;
 
         /** Languages for which source code should be built */
         langs: string[];
