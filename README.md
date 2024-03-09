@@ -2,7 +2,7 @@
 
 ## Технологии
 
--   React 18
+-   React 18.2
 -   Webpack 5
 -   Express 4
 -   Node 21.2.0
