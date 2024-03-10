@@ -1,4 +1,7 @@
+import { routerMiddleware } from 'connected-react-router';
 import { StoreOptions } from 'core';
+import { createBrowserHistory, createMemoryHistory } from 'history';
+
 import {
     Middleware,
     createStore,
@@ -11,15 +14,22 @@ import { createLogger } from 'redux-logger';
 
 import config from 'client/config/config';
 import isServer from 'client/utils/serverSide/isServerEnvChecker';
+import router from 'server/router';
 
 function configureStore(
     reducers = {},
     initialState = {},
     options?: StoreOptions
 ) {
-    const { isLogger } = options || ({} as StoreOptions);
+    const { isLogger, router } = options || ({} as StoreOptions);
 
-    const middlewares: Middleware[] = [thunk];
+    const history = !isServer
+        ? createBrowserHistory()
+        : createMemoryHistory({
+              initialEntries: router?.initialEntries || ['/']
+          });
+
+    const middlewares: Middleware[] = [thunk, routerMiddleware(history)];
 
     if (!isServer && process.env.NODE_ENV !== config.__PROD__ && isLogger) {
         const logger = createLogger({ collapsed: true });
@@ -36,7 +46,7 @@ function configureStore(
 
     // Можем добавить hot-reload
 
-    return { store };
+    return { store, history };
 }
 
 export default configureStore;

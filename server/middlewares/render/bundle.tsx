@@ -5,6 +5,7 @@ import cfg from '../../../lib/cfg';
 import { renderToString, renderToStaticMarkup } from 'react-dom/server';
 import htmlescape from 'htmlescape';
 import { Provider } from 'react-redux';
+import { StaticRouter, StaticHandlerContext } from 'react-router-dom/server';
 
 import { reducers } from 'client/reducers';
 import configureStore from 'client/store';
@@ -95,7 +96,7 @@ export interface RenderBundleArguments {
     location: string;
 }
 
-export default ({ bundleName, data }: RenderBundleArguments) => {
+export default ({ bundleName, data, location }: RenderBundleArguments) => {
     // тут можно прокидывать язык из data
     const Bundle = getBundle(bundleName, 'ru');
 
@@ -118,7 +119,9 @@ export default ({ bundleName, data }: RenderBundleArguments) => {
     // тут react компонент скомпиленный в html с клиента
     const bundleHtml = renderToString(
         <Provider store={store}>
-            <Bundle data={data} />
+            <StaticRouter location={location}>
+                <Bundle data={data} />
+            </StaticRouter>
         </Provider>
     );
 

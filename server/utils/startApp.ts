@@ -26,13 +26,11 @@ if (isDev) {
 
 export function startApp({ server }: Options) {
     Loadable.preloadAll().then(() => {
-        if (isDev) {
-            server.listen(PORT, () => {
-                console.log(
-                    `SERVER STARTED `,
-                    APP_HOSTS.concat(...devHosts.map(({ host }) => host))
-                );
-            });
-        }
+        server.listen(PORT, () => {
+            console.log(
+                `SERVER STARTED `,
+                APP_HOSTS.concat(...devHosts.map(({ host }) => host))
+            );
+        });
     });
 }

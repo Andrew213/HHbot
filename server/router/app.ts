@@ -9,6 +9,14 @@ const middlewares: Array<RequestHandler | ErrorRequestHandler> = [
     logger
 ];
 
+const allRoutes = function flatRoutes(routesMap: object): string[] {
+    return Object.values(routesMap).reduce<string[]>(
+        (routes, path) =>
+            routes.concat(typeof path === 'object' ? flatRoutes(path) : path),
+        []
+    );
+};
+
 export function appRoutes(router: Router) {
     router.get('/', middlewares, renderApp);
 }
