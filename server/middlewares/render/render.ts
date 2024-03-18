@@ -1,8 +1,16 @@
 import type { NextFunction, Request, Response } from 'express';
 import renderBundle from './bundle';
+import { OutgoingHttpHeaders } from 'http';
+
+export type DataFromServerSide = {
+    ip?: string;
+    location?: string;
+    faviconLang?: string;
+    resHeaders: OutgoingHttpHeaders;
+};
 
 export interface Resp extends Response {
-    renderBundle: (bundleName: string, data: Record<string, unknown>) => void;
+    renderBundle: (bundleName: string, data: DataFromServerSide) => void;
 }
 
 export default (req: Request, res: Resp, next: NextFunction) => {
@@ -10,7 +18,7 @@ export default (req: Request, res: Resp, next: NextFunction) => {
 
     // прокидываю ф-ю рендера в объект Response\
     // далее вызываю её в server/controllers/app.ts
-    res.renderBundle = (bundleName: string, data: {}) => {
+    res.renderBundle = (bundleName: string, data: DataFromServerSide) => {
         console.log('\n\n\n\nIN SERVER/MIDDLEWARES/RENDER/RENDER.TS 2\n\n\n\n');
 
         const location = req.url;

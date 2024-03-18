@@ -1,7 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 
-import Hello from 'client/pages/hello';
+import Hello from 'client/pages/hello/Hello';
 
 const Wrapper = () => {
     return (

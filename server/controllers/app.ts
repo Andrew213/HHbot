@@ -6,7 +6,7 @@ export default function renderApp(req: Request, res: Resp) {
     console.log(`\n\n\n\nin server/controllers/app.ts\n\n\n\n`);
     // req.tld!
     const faviconLang = ['com', 'com.tr'].includes('ru') ? 'en' : 'ru';
-    const { ip } = req;
+    const ip = req.socket.remoteAddress;
 
     // вызываю рендер бандла - СЕРДЦЕ ССР
     res.renderBundle('desktop', {

@@ -12,6 +12,8 @@ interface Options {
 
 const { PORT = 3000, NODE_ENV } = process.env;
 
+console.log(`PROCESS.ENV `, process.env);
+
 const isDev = NODE_ENV === 'development';
 
 const APP_HOSTS = ['localhost'];

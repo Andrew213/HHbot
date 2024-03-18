@@ -6,6 +6,9 @@ declare module 'cfg' {
             method: {};
             timeout: number;
         };
+
+        csp?: {}; // TODO: Перед влитием
+
         /**
          * Option for environment detection
          */
@@ -47,9 +50,14 @@ declare module 'cfg' {
         };
     }
 
+    // eslint-disable no-use-before-define
     type RecursivePartial<T> = {
         [P in keyof T]?: RecursivePartial<T[P]>;
     };
+    // eslint-enable no-use-before-define
 
     export type AppConfig = RecursivePartial<Config>;
+
+    const config: Config;
+    export default config;
 }

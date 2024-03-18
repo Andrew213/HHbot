@@ -3,9 +3,14 @@
 import React from 'react';
 import cfg from '../../../lib/cfg';
 import { renderToString, renderToStaticMarkup } from 'react-dom/server';
+import { Provider } from 'react-redux';
 import htmlescape from 'htmlescape';
 
+import { RootState, initStore } from '../../../client/store';
 import vendorsMeta from 'webpack/config/vendors-meta';
+import { renderObject } from 'server/utils/renderObject';
+import { Store } from 'redux';
+import { DataFromServerSide } from './render';
 
 const getBundle = (bundleName: string, lang: string) => {
     const module = `../../../ssr.bundles.${lang}`;
@@ -32,11 +37,12 @@ const getBundle = (bundleName: string, lang: string) => {
 interface PageHtmlParams {
     bundleName: string;
     bundleHtml: string;
-    data: {};
+    data: DataFromServerSide;
+    store: Store;
 }
 
 const getPageHtml = (params: PageHtmlParams) => {
-    const { bundleName, bundleHtml, data } = params;
+    const { bundleName, bundleHtml, data, store } = params;
     const { baseUrl } = cfg.default.static;
     const bundleFilePath = `${baseUrl}${bundleName}.bundle`;
 
@@ -59,6 +65,13 @@ const getPageHtml = (params: PageHtmlParams) => {
                     id="root"
                     dangerouslySetInnerHTML={{ __html: bundleHtml }}
                 />
+                <script
+                    dangerouslySetInnerHTML={{
+                        __html: `window.__PRELOADED_STATE__ = ${renderObject(
+                            store.getState()
+                        )}`
+                    }}
+                />
                 <script src={`${bundleFilePath}.ru.js`} />
                 {vendorsMeta.hasJs && <script src={`${vendorsFilePath}.js`} />}
                 {/* Прокидываю любые данные с сервера на клиент */}
@@ -76,11 +89,11 @@ const getPageHtml = (params: PageHtmlParams) => {
 
 export interface RenderBundleArguments {
     bundleName: string;
-    data: {};
+    data: DataFromServerSide;
     location: string;
 }
 
-export default ({ bundleName, data }: RenderBundleArguments) => {
+export default ({ bundleName, data, location }: RenderBundleArguments) => {
     // тут можно прокидывать язык из data
     const Bundle = getBundle(bundleName, 'ru');
 
@@ -90,10 +103,17 @@ export default ({ bundleName, data }: RenderBundleArguments) => {
         throw new Error(`Bundle ${bundleName} not found`);
     }
 
+    const store = initStore({
+        User: { jwt: 'asd', ip: data.ip }
+    });
     // тут react компонент скомпиленный в html с клиента
-    const bundleHtml = renderToString(<Bundle data={data} />);
+    const bundleHtml = renderToString(
+        <Provider store={store}>
+            <Bundle data={data} />
+        </Provider>
+    );
 
     return {
-        html: getPageHtml({ bundleHtml, bundleName, data })
+        html: getPageHtml({ bundleHtml, bundleName, data, store })
     };
 };
