@@ -52,29 +52,12 @@ export default {
                 ...cssLoaders,
                 sassLoader,
                 {
-                    loader: 'sass-resources-loader'
-                    // options: {
-                    //     resources: [
-                    //         'client/sass/_variables.scss',
-                    //         'client/sass/_functions.scss',
-                    //         'client/sass/_mixins.scss',
-                    //         'client/sass/_extendable.scss',
-                    //         'client/sass/_reset.scss'
-                    //     ]
-                    // }
+                    loader: 'sass-resources-loader',
+                    options: {
+                        resources: ['client/styles/main.scss']
+                    }
                 }
             ]
-        }
-    ],
-    // возможно удалить, т.к в settings/loadStyles не применяется
-    ssr: [
-        {
-            test: /\.scss$/,
-            loader: 'null-loader'
-        },
-        {
-            test: /\.css$/,
-            loader: 'null-loader'
         }
     ]
 };

@@ -1,17 +1,17 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 
-import Hello from 'client/pages/hello/Hello';
-
+import { Box, Grid } from '@mui/material';
+import AppRouter from 'client/routers';
 const Wrapper = () => {
     return (
         <>
             <Helmet>
-                <title>Hello</title>
+                <title>Hellos</title>
                 <meta name="title" content="ssr" />
             </Helmet>
 
-            <Hello />
+            <AppRouter />
         </>
     );
 };

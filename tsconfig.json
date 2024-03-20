@@ -15,6 +15,9 @@
         "plugins": [{ "transform": "ts-transformer-keys/transformer" }],
         "esModuleInterop": true,
         "resolveJsonModule": true,
+        "paths": {
+            "@mui/styled-engine": ["./node_modules/@mui/styled-engine-sc"]
+        },
         "skipLibCheck": true,
         "experimentalDecorators": true,
         "typeRoots": ["./@types", "node_modules/@types"],

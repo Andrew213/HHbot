@@ -40,6 +40,9 @@ export default ({ lang, index }) =>
                     : `https://storage.yandexcloud.net/path/to/S3/${process.env.APP_VERSION}/client/`
             },
             resolve: {
+                alias: {
+                    '@mui/styled-engine': '@mui/styled-engine-sc'
+                },
                 extensions: ['.js', '.ts', '.tsx', '.json'],
                 plugins: [new TsconfigPathsPlugin()],
                 fallback: {

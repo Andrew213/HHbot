@@ -33,9 +33,6 @@ const addAliases = (
     if (newHosts.length > 2) {
         execSync(`sudo sh -c "echo \'${newHosts.join('\n')}\' >> /etc/hosts"`);
     }
-
-    console.log('newHosts ', newHosts);
-    console.log('currentHosts ', currentHosts);
 };
 
 addAliases(hosts, 'ssr-vue-express');

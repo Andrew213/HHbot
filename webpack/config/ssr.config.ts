@@ -11,10 +11,6 @@ config();
 const cfg = require('../../lib/cfg').default;
 
 function getConfig(lang: string): webpack.Configuration {
-    console.log(
-        `ENTRY PATH IN ssr.config.ts `,
-        join(ROOT_DIR_FROM_WEBPACK, 'client', 'bundles', 'index.ts')
-    );
     return flow([
         initServerConfig({
             entry: {

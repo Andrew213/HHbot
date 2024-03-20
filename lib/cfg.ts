@@ -34,8 +34,6 @@ try {
     console.warn(`[cfg] Warning: could not load ${ENV} config`, err);
 }
 
-console.log(`environmentConfig `, environmentConfig);
-
 export default mergeOptions(
     { environment: ENV },
     defaultConfig,

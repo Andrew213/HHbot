@@ -1,15 +1,13 @@
 // ОСНОВНОЙ ФАЙЛ, ОТКУДА ЭЕКСПОРТИРУЕТСЯ МЕТОД renderBundle и прочие
 // ТУТ И ПРОИСХОДИТ ПОДМЕНА HTML НА СЕРВЕРЕ
-import React from 'react';
 import cfg from '../../../lib/cfg';
 import { renderToString, renderToStaticMarkup } from 'react-dom/server';
 import { Provider } from 'react-redux';
+import { StaticRouter } from 'react-router-dom/server';
 import htmlescape from 'htmlescape';
 
-import { RootState, initStore } from '../../../client/store';
 import vendorsMeta from 'webpack/config/vendors-meta';
 import { renderObject } from 'server/utils/renderObject';
-import { Store } from 'redux';
 import { DataFromServerSide } from './render';
 
 const getBundle = (bundleName: string, lang: string) => {
@@ -38,7 +36,7 @@ interface PageHtmlParams {
     bundleName: string;
     bundleHtml: string;
     data: DataFromServerSide;
-    store: Store;
+    store: any;
 }
 
 const getPageHtml = (params: PageHtmlParams) => {
@@ -46,10 +44,7 @@ const getPageHtml = (params: PageHtmlParams) => {
     const { baseUrl } = cfg.default.static;
     const bundleFilePath = `${baseUrl}${bundleName}.bundle`;
 
-    console.log(`bundleFilePath `, bundleFilePath);
     const vendorsFilePath = `${baseUrl}_/${vendorsMeta.name}`;
-
-    console.log(`vendorsFilePath `, vendorsFilePath);
 
     const html = renderToStaticMarkup(
         <html>
@@ -91,25 +86,28 @@ export interface RenderBundleArguments {
     bundleName: string;
     data: DataFromServerSide;
     location: string;
+    store: any;
 }
 
-export default ({ bundleName, data, location }: RenderBundleArguments) => {
+export default ({
+    bundleName,
+    data,
+    location,
+    store
+}: RenderBundleArguments) => {
     // тут можно прокидывать язык из data
     const Bundle = getBundle(bundleName, 'ru');
-
-    console.log(`bundleName `, bundleName);
 
     if (!Bundle) {
         throw new Error(`Bundle ${bundleName} not found`);
     }
 
-    const store = initStore({
-        User: { jwt: 'asd', ip: data.ip }
-    });
     // тут react компонент скомпиленный в html с клиента
     const bundleHtml = renderToString(
         <Provider store={store}>
-            <Bundle data={data} />
+            <StaticRouter location={location}>
+                <Bundle data={data} />
+            </StaticRouter>
         </Provider>
     );
 

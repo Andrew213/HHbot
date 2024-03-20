@@ -27,6 +27,7 @@ export default ({ entry, lang }) =>
                 })
             ],
             resolve: {
+                alias: { '@mui/styled-engine': '@mui/styled-engine-sc' },
                 extensions: ['.js', '.ts', '.tsx', '.json'],
                 plugins: [new TsconfigPathsPlugin()],
                 fallback: {
