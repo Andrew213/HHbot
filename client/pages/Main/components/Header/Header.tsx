@@ -25,6 +25,7 @@ const Header = () => {
     const { isAuth } = useTypedSelector(state => state.Login);
 
     useEffect(() => {
+        console.log(`test `);
         if (searchParams.has('code')) {
             GetTokens(searchParams.get('code') as string);
             setSearchParams('');
