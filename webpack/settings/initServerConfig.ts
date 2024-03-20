@@ -27,6 +27,7 @@ export default ({ entry, lang }) =>
                 })
             ],
             resolve: {
+                alias: { '@mui/styled-engine': '@mui/styled-engine-sc' },
                 extensions: ['.js', '.ts', '.tsx', '.json'],
                 plugins: [new TsconfigPathsPlugin()],
                 fallback: {
@@ -54,14 +55,16 @@ export default ({ entry, lang }) =>
                 hints: false
             },
             plugins: [
-                new webpack.DefinePlugin(
-                    merge(GLOBAL_ARGS, {
-                        'process.env': {
-                            LANG: JSON.stringify(lang),
-                            APP_SIDE: 'server'
-                        }
-                    })
-                )
+                new webpack.DefinePlugin({
+                    'process.env': JSON.stringify(process.env)
+                }),
+                new webpack.ProvidePlugin({
+                    window: resolve(join(__dirname, '../mock/window.mock.ts')),
+                    localStorage: resolve(
+                        join(__dirname, '../mock/localStorage.mock')
+                    ),
+                    document: 'global/document'
+                })
             ]
         });
         return webpackConfig;

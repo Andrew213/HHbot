@@ -1,10 +1,16 @@
 import express, { Express } from 'express';
 import { queryParser } from './controllers';
 import { render } from './middlewares';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import router from 'server/router';
 const server: Express = express();
 
+server.use(cookieParser());
+server.use(cors());
+server.use(express.json());
 server
+    .use(express.urlencoded({ extended: true }))
     /**
  Это метод Express.js, который отключает заголовок "x-powered-by". 
  Этот заголовок по умолчанию предоставляет информацию о том, какой сервер обрабатывает запросы. 

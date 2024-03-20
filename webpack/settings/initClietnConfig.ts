@@ -6,9 +6,9 @@ import { join } from 'path';
 import { TsconfigPathsPlugin } from 'tsconfig-paths-webpack-plugin';
 import webpack, { Configuration } from 'webpack';
 
-import { CLIENT_DIR, DIST_DIR, ROOT_DIR } from '../assets/dir';
+import { CLIENT_DIR } from '../assets/dir';
 
-import { ENVS, GLOBAL_ARGS } from '../assets/env';
+import { ENVS } from '../assets/env';
 
 const { __DEV__, __PROD__ } = ENVS;
 
@@ -40,6 +40,9 @@ export default ({ lang, index }) =>
                     : `https://storage.yandexcloud.net/path/to/S3/${process.env.APP_VERSION}/client/`
             },
             resolve: {
+                alias: {
+                    '@mui/styled-engine': '@mui/styled-engine-sc'
+                },
                 extensions: ['.js', '.ts', '.tsx', '.json'],
                 plugins: [new TsconfigPathsPlugin()],
                 fallback: {
@@ -69,7 +72,9 @@ export default ({ lang, index }) =>
                 // }),
                 new webpack.ProgressPlugin(),
                 // new CheckerPlugin(),
-                new webpack.DefinePlugin(GLOBAL_ARGS),
+                new webpack.DefinePlugin({
+                    'process.env': JSON.stringify(process.env)
+                }),
                 new LodashModuleReplacementPlugin({
                     shorthands: true,
                     cloning: true,

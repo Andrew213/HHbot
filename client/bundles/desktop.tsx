@@ -1,12 +1,19 @@
 import { hydrateRoot } from 'react-dom/client';
 import { Helmet } from 'react-helmet';
 import { hot } from 'react-hot-loader/root';
+import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
+
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
 
 import Core from 'client/pages/core';
+import { initStore } from 'client/store';
+import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
 
 const Bundle = props => {
-    console.log(`props `, props);
-
     return (
         <>
             <Helmet>
@@ -20,12 +27,29 @@ const Bundle = props => {
         </>
     );
 };
+// @ts-ignore
+const store = initStore(window.__PRELOADED_STATE__);
+
+delete window.__PRELOADED_STATE__;
 
 export const DesktopBundle = hot(Bundle);
+
+const darkTheme = createTheme({
+    palette: {
+        mode: 'dark'
+    }
+});
 
 export default data => {
     hydrateRoot(
         document.getElementById('root') as HTMLElement,
-        <DesktopBundle data={data} />
+        <Provider store={store}>
+            <BrowserRouter>
+                <ThemeProvider theme={darkTheme}>
+                    <CssBaseline />
+                    <DesktopBundle data={data} />
+                </ThemeProvider>
+            </BrowserRouter>
+        </Provider>
     );
 };
