@@ -10,7 +10,7 @@ export const VacanciesReducer = (
 ) => {
     switch (action.type) {
         case VacanciesType.REQUEST_VACANCIES:
-            return { ...state, loading: true };
+            return { ...state, loading: action.loading };
         case VacanciesType.RECEIVE_VACANCIES:
             return { ...state, ...action.payload, loading: false };
         case VacanciesType.ERROR_VACANCIES:

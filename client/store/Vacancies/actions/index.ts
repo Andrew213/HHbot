@@ -2,25 +2,36 @@ import { ThunkDispatch } from 'redux-thunk';
 import { VacnciesStateT } from '../VacanciesStore';
 import { VacanciesActionI } from './AI';
 import { VacanciesType } from './AT';
+import { RootState } from 'client/store';
 import axios from 'axios';
 import { receiveVacancies } from './AC';
 
-export const getVacancies = (resume_id: string) => {
+export const getVacancies = (resume_id: string, page: number) => {
     return async (
-        dispatch: ThunkDispatch<VacnciesStateT, void, VacanciesActionI>
+        dispatch: ThunkDispatch<VacnciesStateT, void, VacanciesActionI>,
+        getState: () => RootState
     ) => {
+        const { Vacancies } = getState();
+
         try {
             dispatch({
                 type: VacanciesType.REQUEST_VACANCIES,
-                loading: true
+                loading: !Vacancies.items
             });
 
             const response = await axios.get(
-                `/vacancies?resume_id=${resume_id}`
+                `/vacancies?resume_id=${resume_id}&page=${page}`
             );
 
             if (response.status === 200) {
-                dispatch(receiveVacancies(response.data));
+                let items = response.data.items;
+                if (Vacancies.items) {
+                    const oldVacancies = Vacancies.items;
+                    items = [...oldVacancies, ...items];
+                }
+
+                console.log(`items `, items);
+                dispatch(receiveVacancies({ ...response.data, items }));
             }
         } catch (err) {
             dispatch({

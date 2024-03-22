@@ -6,9 +6,12 @@ export function vacanciesRouter(router: Router) {
     router.get(
         '/vacancies',
         async (request: Request, response: Response, next: NextFunction) => {
-            const { resume_id } = request.query;
+            const { resume_id, page } = request.query;
             await vacanciesApiServer
-                .getSimilarVacancies(resume_id as string)
+                .getSimilarVacancies(
+                    resume_id as string,
+                    page as unknown as number
+                )
                 .then(res => {
                     response.status(200).send(res);
                 })

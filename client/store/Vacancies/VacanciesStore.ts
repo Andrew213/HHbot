@@ -38,4 +38,5 @@ export type VacnciesStateT = {
     per_page: number;
     alternate_url: string | null;
     errMsg?: string;
+    found: number;
 };
