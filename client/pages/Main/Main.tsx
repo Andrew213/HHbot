@@ -1,14 +1,28 @@
-import { Grid } from '@mui/material';
-import useAction from 'client/hooks/useAction';
-import { useEffect } from 'react';
+import { Grid, Paper, Stack, styled } from '@mui/material';
 import Header from './components/Header/Header';
-import { useTypedSelector } from 'client/hooks/useTypedSelector';
-import { useSearchParams } from 'react-router-dom';
+import VacanciesList from './components/VacanciesList/VacanciesList';
+
 const Main = () => {
     return (
-        <>
+        <Grid>
             <Header />
-        </>
+            <Grid container spacing={4} paddingLeft={'40px'}>
+                <Grid
+                    item
+                    xs={4}
+                    sx={{
+                        paddingLeft: '40px'
+                    }}
+                >
+                    <Paper sx={{ backgroundColor: 'blue' }}>
+                        Тут будет сортировка и возможность рассылки
+                    </Paper>
+                </Grid>
+                <Grid item xs={8}>
+                    <VacanciesList />
+                </Grid>
+            </Grid>
+        </Grid>
     );
 };
 

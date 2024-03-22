@@ -16,4 +16,18 @@ export function userRouter(router: Router) {
                 });
         }
     );
+
+    router.get(
+        '/user/resume',
+        async (request: Request, response: Response, next: NextFunction) => {
+            await userApiServer
+                .getResumeList()
+                .then(res => {
+                    response.status(200).send(res);
+                })
+                .catch(err => {
+                    response.status(403).send(err);
+                });
+        }
+    );
 }

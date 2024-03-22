@@ -1,21 +1,25 @@
 import AppBar from '@mui/material/AppBar';
-import IconButton from '@mui/material/IconButton';
 
-import MenuIcon from '@mui/icons-material/Menu';
 import {
     Box,
     Button,
     LinearProgress,
     Toolbar,
-    Typography
+    Typography,
+    styled
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTypedSelector } from 'client/hooks/useTypedSelector';
 import useAction from 'client/hooks/useAction';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
+const ToolbarStyled = styled(Toolbar)(({ theme }) => ({
+    padding: '0 40px'
+    // textAlign: 'center',
+    // color: theme.palette.text.secondary
+}));
 const Header = () => {
-    const { GetTokens, GetUser, Logout } = useAction();
+    const { getTokens, getUser, logout, getResume } = useAction();
 
     const [searchParams, setSearchParams] = useSearchParams();
 
@@ -26,14 +30,15 @@ const Header = () => {
 
     useEffect(() => {
         if (searchParams.has('code')) {
-            GetTokens(searchParams.get('code') as string);
+            getTokens(searchParams.get('code') as string);
             setSearchParams('');
         }
     }, [searchParams]);
 
     useEffect(() => {
         if (isAuth) {
-            GetUser();
+            getUser();
+            getResume();
         }
     }, [isAuth]);
 
@@ -46,8 +51,8 @@ const Header = () => {
     }
 
     return (
-        <AppBar position="static">
-            <Toolbar>
+        <AppBar position="static" sx={{ marginBottom: 2, paddingLeft: 0 }}>
+            <ToolbarStyled>
                 {/* <IconButton
                     size="large"
                     edge="start"
@@ -64,15 +69,27 @@ const Header = () => {
                     {user?.last_name}
                 </Typography>
 
-                <Button variant="outlined" href={user?.resumes_url}>
-                    {user?.resumes_url}
-                </Button>
+                {user.resumeList?.length &&
+                    user.resumeList.map(el => {
+                        return (
+                            <Button
+                                variant="outlined"
+                                key={el.id}
+                                href={el.alternate_url}
+                                target="_blank"
+                            >
+                                {el.title}
+                            </Button>
+                        );
+                    })}
+
                 <Button
                     onClick={() => {
-                        Logout();
+                        logout();
                         navigate('/login');
                     }}
                     color="inherit"
+                    variant="outlined"
                     sx={{ ml: 'auto' }}
                 >
                     Logout
@@ -85,7 +102,7 @@ const Header = () => {
                 }}
                 open={isMenuOpen}
             ></Menu> */}
-            </Toolbar>
+            </ToolbarStyled>
         </AppBar>
     );
 };

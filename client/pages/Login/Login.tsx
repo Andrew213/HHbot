@@ -1,6 +1,19 @@
 import { Button, Grid } from '@mui/material';
+import { useTypedSelector } from 'client/hooks/useTypedSelector';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router';
 
 const Login = () => {
+    const { isAuth } = useTypedSelector(state => state.Login);
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (isAuth) {
+            navigate('/');
+        }
+    }, [isAuth]);
+
     return (
         <Grid
             container

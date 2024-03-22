@@ -33,6 +33,12 @@ module.exports = {
         'plugin:@typescript-eslint/recommended-requiring-type-checking'
     ],
     rules: {
+        'no-restricted-imports': [
+            'error',
+            {
+                patterns: ['@mui/*/*/*']
+            }
+        ],
         'arrow-parens': ['error', 'as-needed'],
         quotes: ['error', 'single'],
         '@typescript-eslint/no-unused-vars': [

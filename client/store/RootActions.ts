@@ -1,6 +1,11 @@
-import { getTokens, logout } from './Login/actions';
-import { getUser } from './User/actions';
+import * as loginActions from './Login/actions';
+import * as userActions from './User/actions';
+import * as vacanciesActions from './Vacancies/actions';
 
-export const GetTokens = getTokens;
-export const GetUser = getUser;
-export const Logout = logout;
+const actions = {
+    ...loginActions,
+    ...userActions,
+    ...vacanciesActions
+};
+
+export default actions;

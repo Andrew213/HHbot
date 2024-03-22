@@ -4,12 +4,10 @@ import { RootState } from 'client/store/RootReducers';
 import { userStateT } from '../userState';
 import { errorUser, receiveUser, requestUser } from './AC';
 import axios from 'axios';
+import { UserActionType } from './AT';
 
 export const getUser = () => {
-    return async (
-        dispatch: ThunkDispatch<userStateT, void, UserActionI>,
-        getState: () => RootState
-    ) => {
+    return async (dispatch: ThunkDispatch<userStateT, void, UserActionI>) => {
         try {
             dispatch(requestUser());
             const response = await axios.get('/user/me');
@@ -19,7 +17,28 @@ export const getUser = () => {
         } catch (error) {
             dispatch(errorUser(error.message));
 
-            console.log(`error in store`, error);
+            console.log(`error in user store`, error);
+        }
+    };
+};
+
+export const getResume = () => {
+    return async (dispatch: ThunkDispatch<userStateT, void, UserActionI>) => {
+        try {
+            dispatch({
+                type: UserActionType.REQUEST_RESUME
+            });
+            const response = await axios.get('/user/resume');
+
+            if (response.status === 200) {
+                dispatch({
+                    type: UserActionType.RECEIVE_RESUME,
+                    resumeList: response.data.items
+                });
+            }
+        } catch (error) {
+            dispatch(errorUser(error.message));
+            console.log(`error in user store`, error);
         }
     };
 };

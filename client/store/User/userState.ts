@@ -1,9 +1,16 @@
+export type resumeT = {
+    id: string;
+    title: string;
+    alternate_url: string;
+};
+
 export type userT = {
     first_name?: string;
     middle_name?: string;
     last_name?: string;
     email?: string;
     resumes_url?: string;
+    resumeList?: resumeT[];
     counter?: {
         new_resume_views: number;
         unread_negotiations: number;

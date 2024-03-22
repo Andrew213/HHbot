@@ -9,6 +9,15 @@ class userAPI {
             throw new Error(err);
         }
     }
+
+    public async getResumeList() {
+        try {
+            const response = await api.getData('resumes/mine');
+            return response;
+        } catch (err) {
+            throw new Error(err);
+        }
+    }
 }
 
 const userApiServer = new userAPI();
