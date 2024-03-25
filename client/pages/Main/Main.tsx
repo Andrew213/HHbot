@@ -1,10 +1,10 @@
-import { Grid, Paper, Stack, styled } from '@mui/material';
+import { Grid, Paper } from '@mui/material';
 import Header from './components/Header/Header';
 import VacanciesList from './components/VacanciesList/VacanciesList';
 
 const Main = () => {
     return (
-        <Grid>
+        <>
             <Header />
             <Grid container spacing={4} paddingLeft={'40px'}>
                 <Grid
@@ -22,7 +22,7 @@ const Main = () => {
                     <VacanciesList />
                 </Grid>
             </Grid>
-        </Grid>
+        </>
     );
 };
 

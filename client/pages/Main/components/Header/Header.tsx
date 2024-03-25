@@ -8,10 +8,11 @@ import {
     Typography,
     styled
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useTypedSelector } from 'client/hooks/useTypedSelector';
 import useAction from 'client/hooks/useAction';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { getVacancies } from 'client/store/Vacancies/actions';
 
 const ToolbarStyled = styled(Toolbar)(({ theme }) => ({
     padding: '0 40px'
@@ -19,22 +20,16 @@ const ToolbarStyled = styled(Toolbar)(({ theme }) => ({
     // color: theme.palette.text.secondary
 }));
 const Header = () => {
-    const { getTokens, getUser, logout, getResume } = useAction();
-
-    const [searchParams, setSearchParams] = useSearchParams();
+    const { getUser, logout, getResume } = useAction();
 
     const navigate = useNavigate();
 
     const { user, loading } = useTypedSelector(state => state.User);
     const { isAuth } = useTypedSelector(state => state.Login);
 
-    useEffect(() => {
-        if (searchParams.has('code')) {
-            getTokens(searchParams.get('code') as string);
-            setSearchParams('');
-        }
-    }, [searchParams]);
+    const [searchParams] = useSearchParams();
 
+    console.log('resumeList', user.resumeList);
     useEffect(() => {
         if (isAuth) {
             getUser();
@@ -69,19 +64,21 @@ const Header = () => {
                     {user?.last_name}
                 </Typography>
 
-                {user.resumeList?.length &&
-                    user.resumeList.map(el => {
-                        return (
-                            <Button
-                                variant="outlined"
-                                key={el.id}
-                                href={el.alternate_url}
-                                target="_blank"
-                            >
-                                {el.title}
-                            </Button>
-                        );
-                    })}
+                {user.resumeList &&
+                    user.resumeList
+                        .filter(el => el.id === searchParams.get('resume'))
+                        .map(el => {
+                            return (
+                                <Button
+                                    variant="outlined"
+                                    key={el.id}
+                                    href={el.alternate_url}
+                                    target="_blank"
+                                >
+                                    {el.title}
+                                </Button>
+                            );
+                        })}
 
                 <Button
                     onClick={() => {

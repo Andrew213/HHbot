@@ -17,6 +17,16 @@ class VacanciesAPI {
             throw new Error(error);
         }
     }
+
+    // отправить отклик
+    public async sendNegotiations(data) {
+        try {
+            const response = await api.postData('negotiationss', data);
+            return response;
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
 }
 
 const vacanciesApiServer = new VacanciesAPI();

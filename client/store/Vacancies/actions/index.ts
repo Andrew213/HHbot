@@ -30,7 +30,6 @@ export const getVacancies = (resume_id: string, page: number) => {
                     items = [...oldVacancies, ...items];
                 }
 
-                console.log(`items `, items);
                 dispatch(receiveVacancies({ ...response.data, items }));
             }
         } catch (err) {

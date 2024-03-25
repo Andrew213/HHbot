@@ -8,7 +8,9 @@ class API {
         this.axiosInstance = axios.create({
             baseURL: 'https://api.hh.ru/',
             headers: {
-                'Content-Type': 'application/json',
+                // 'Content-Type': 'application/json',
+                'Content-Type': 'multipart/form-data',
+
                 'User-Agent': 'HHbot (a.kochanov31@yandex.ru)'
             },
             withCredentials: true,
@@ -24,6 +26,17 @@ class API {
     public async getData(endPoint: string, data?: Record<string, any>) {
         try {
             const response = await this.axiosInstance.get(endPoint);
+
+            return response.data;
+        } catch (error) {
+            console.log(`api error in base `, error);
+            throw new Error(error);
+        }
+    }
+
+    public async postData(endPoint: string, data?: Record<string, any>) {
+        try {
+            const response = await this.axiosInstance.post(endPoint, data);
 
             return response.data;
         } catch (error) {

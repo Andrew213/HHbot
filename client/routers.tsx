@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import Login from './pages/Login/Login';
 import useAction from './hooks/useAction';
 import { Box, LinearProgress } from '@mui/material';
+import SelectResume from './pages/Main/components/SelectResume/SelectResume';
 
 const AppRouter = () => {
     const navigate = useNavigate();
@@ -34,6 +35,10 @@ const AppRouter = () => {
         <Routes>
             <Route path={ROUTES.INDEX_REDIRECT.INDEX} element={<Main />} />
             <Route path={ROUTES.LOGIN.INDEX} element={<Login />} />
+            <Route
+                path={ROUTES.SELECT_RESUME.INDEX}
+                element={<SelectResume />}
+            />
         </Routes>
     );
 };

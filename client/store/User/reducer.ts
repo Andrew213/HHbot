@@ -7,7 +7,6 @@ const UserState: userStateT = {
     user: {},
     errMsg: ''
 };
-
 export const UserReducer = (
     state: userStateT = UserState,
     action: UserActionI
@@ -19,7 +18,7 @@ export const UserReducer = (
             return {
                 ...state,
                 loading: false,
-                user: action.user
+                user: { ...state.user, ...action.user }
             };
         case UserActionType.ERROR_USER:
             return { ...state, loading: false, errMsg: action.errMsg };
