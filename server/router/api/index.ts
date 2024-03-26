@@ -29,7 +29,7 @@ class API {
 
             return response;
         } catch (error) {
-            throw error;
+            throw error.response;
         }
     }
 

@@ -84,7 +84,8 @@ const VacancyItem: React.FC<
     alternate_url,
     employer,
     experience,
-    message
+    message,
+    resume_id
 }) => {
     const {
         user: { resumeList }
@@ -96,11 +97,7 @@ const VacancyItem: React.FC<
 
     const { addToResponseArray } = useAction();
 
-    const [width, height] = useWindowSize();
-
-    useEffect(() => {
-        console.log(`width `, width);
-    }, [width]);
+    const [width] = useWindowSize();
 
     const onRespondHandler = async (vacancy_id: string) => {
         if (resumeList) {
@@ -111,7 +108,7 @@ const VacancyItem: React.FC<
                 message?: string; // знак вопроса делает это свойство необязательным
             } = {
                 vacancy_id,
-                resume_id: resumeList[0].id
+                resume_id
             };
             if (message) {
                 data.message = message;
@@ -129,7 +126,7 @@ const VacancyItem: React.FC<
 
     return (
         <>
-            <Item variant="outlined" key={id}>
+            <Item variant="outlined" itemID={id} key={id}>
                 <Grid
                     display="flex"
                     height="100%"

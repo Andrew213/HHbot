@@ -13,7 +13,7 @@ class VacanciesAPI {
             );
             return response;
         } catch (error) {
-            return error;
+            throw error;
         }
     }
 

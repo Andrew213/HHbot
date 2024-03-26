@@ -6,33 +6,32 @@ import { useTypedSelector } from 'client/hooks/useTypedSelector';
 import { memo, useEffect, useState } from 'react';
 import VacancyItem from '../VacancyItem/VacancyItem';
 import Spiner from 'client/components/error-boundry/Spiner';
-import { useSearchParams } from 'react-router-dom';
+import { Box } from '@mui/material';
 
-const VacanciesList: React.FC<{ message: string }> = ({ message }) => {
+const VacanciesList: React.FC<{
+    message: string;
+    resume_id: string;
+}> = ({ message, resume_id }) => {
     const { loading, items, found } = useTypedSelector(
         state => state.Vacancies
     );
 
-    const [resumeId, setResumeId] = useState<string>('');
-
     const [currentPage, setCurrentPage] = useState<number>(0);
-
-    const [searchParams, setSearchParams] = useSearchParams();
 
     const { getVacancies } = useAction();
 
     useEffect(() => {
-        if (searchParams.has('resume')) {
-            setResumeId(searchParams.get('resume') as string);
-            getVacancies(searchParams.get('resume') as string, currentPage);
+        if (resume_id) {
+            getVacancies(resume_id, currentPage);
+            setCurrentPage(prev => prev + 1);
         }
-    }, [searchParams]);
+    }, [resume_id]);
 
     const isItemLoaded = index => !!items[index];
 
     const loadMoreItems = (startIndex, stopIndex) => {
-        if (resumeId && found >= items.length) {
-            getVacancies(resumeId, currentPage);
+        if (resume_id && found >= items.length) {
+            getVacancies(resume_id, currentPage);
             setCurrentPage(prev => prev + 1);
         }
         return new Promise<void>(resolve =>
@@ -46,7 +45,16 @@ const VacanciesList: React.FC<{ message: string }> = ({ message }) => {
     };
 
     if (loading) {
-        return <Spiner />;
+        return (
+            <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                height="calc(100vh - 80px)"
+            >
+                <Spiner />
+            </Box>
+        );
     }
 
     return (
@@ -82,7 +90,7 @@ const VacanciesList: React.FC<{ message: string }> = ({ message }) => {
                                         }}
                                     >
                                         <VacancyItem
-                                            resume_id={resumeId}
+                                            resume_id={resume_id}
                                             message={message}
                                             {...items[index]}
                                         />

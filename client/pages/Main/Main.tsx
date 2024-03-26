@@ -1,18 +1,24 @@
 import {
+    Button,
     Grid,
     SpeedDial,
     SpeedDialAction,
     TextField,
-    Tooltip
+    Tooltip,
+    Typography
 } from '@mui/material';
 import Header from './components/Header/Header';
 import VacanciesList from './components/VacanciesList/VacanciesList';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import useWindowSize from 'client/hooks/useWondowResize';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import MessageIcon from '@mui/icons-material/Message';
+import useAction from 'client/hooks/useAction';
+import { useTypedSelector } from 'client/hooks/useTypedSelector';
+import { useSearchParams } from 'react-router-dom';
+import axios from 'axios';
 
 const actions = [
     { icon: <PlayCircleIcon color="success" />, name: 'Start' },
@@ -22,6 +28,80 @@ const actions = [
 
 const Main = () => {
     const [message, setMessage] = useState<string>('');
+
+    const [autoResponseStart, setAutoResponseStart] = useState<boolean>(false);
+
+    const { addToResponseArray } = useAction();
+
+    const [resume_id, setResumeId] = useState<string>('');
+
+    const [searchParams] = useSearchParams();
+
+    const { items, responseIds } = useTypedSelector(state => state.Vacancies);
+
+    const [counter, setCounter] = useState(0);
+
+    useEffect(() => {
+        if (searchParams.has('resume')) {
+            setResumeId(searchParams.get('resume') as string);
+        }
+    }, [searchParams]);
+
+    const someAsyncFunc = useCallback(
+        async vacancy_id => {
+            const el = document.querySelector(`[itemid="${vacancy_id}"]`);
+            if (el) {
+                const data: {
+                    vacancy_id: string;
+                    resume_id: string;
+                    message?: string; // знак вопроса делает это свойство необязательным
+                } = {
+                    vacancy_id,
+                    resume_id
+                };
+                if (message) {
+                    data.message = message;
+                }
+                const response = await axios.post('/negotiations', data);
+
+                el.scrollIntoView();
+
+                if (response.status === 201) {
+                    addToResponseArray(vacancy_id);
+                    setCounter(prev => prev + 1);
+                }
+            }
+        },
+        [resume_id, message]
+    );
+
+    useEffect(() => {
+        let timeoutIds: ReturnType<typeof setTimeout>[] = [];
+        const startAutoResponse = async () => {
+            const notRespondedVacancies = items?.filter(
+                ({ id }) => !responseIds.has(id)
+            );
+
+            for (let i = 0; i < notRespondedVacancies.length; i++) {
+                const vacancy = notRespondedVacancies[i];
+                await new Promise<void>(resolve => {
+                    const id = setTimeout(() => {
+                        resolve();
+                    }, 1000);
+                    timeoutIds.push(id);
+                }).then(() => {
+                    someAsyncFunc(vacancy.id);
+                });
+            }
+        };
+        if (items && autoResponseStart) {
+            startAutoResponse();
+        }
+
+        return () => {
+            timeoutIds.forEach(id => clearTimeout(id));
+        };
+    }, [items, autoResponseStart]);
 
     const [width] = useWindowSize();
 
@@ -51,8 +131,27 @@ const Main = () => {
                                 }}
                             />
                         </Tooltip>
-
-                        {/* <Button type="reset">Очистить поле</Button> */}
+                        <Button
+                            onClick={() => {
+                                setAutoResponseStart(prev => !prev);
+                            }}
+                            variant="contained"
+                            color={autoResponseStart ? 'error' : 'success'}
+                            sx={{
+                                width: 200,
+                                whiteSpace: 'nowrap',
+                                color: '#fff',
+                                marginTop: '20px'
+                            }}
+                        >
+                            {autoResponseStart
+                                ? 'Стоп'
+                                : 'Запустить автоотклик'}
+                        </Button>
+                        <Typography
+                            variant="subtitle2"
+                            component="div"
+                        >{`Автооткликов отправлено: ${counter}`}</Typography>
                     </Grid>
                 ) : (
                     <SpeedDial
@@ -68,23 +167,10 @@ const Main = () => {
                             />
                         ))}
                     </SpeedDial>
-                    // <Fab sx={{ position: 'fixed',  }}>
-                    //     <TextField
-                    //         label="Сопроводительное письмо (достаточно просто ввести)"
-                    //         sx={{
-                    //             width: '100%'
-                    //         }}
-                    //         multiline
-                    //         value={message}
-                    //         onChange={e => {
-                    //             setMessage(e.target.value);
-                    //         }}
-                    //     />
-                    // </Fab>
                 )}
 
                 <Grid xs={12} md={8} lg={8} item>
-                    <VacanciesList message={message} />
+                    <VacanciesList resume_id={resume_id} message={message} />
                 </Grid>
             </Grid>
         </>

@@ -37,14 +37,14 @@ export const DesktopBundle = hot(Bundle);
 const darkTheme = createTheme({
     palette: {
         mode: 'dark'
-    },
-    components: {
-        MuiButton: {
-            styleOverrides: {
-                contained: { backgroundColor: '#1CB5E0' }
-            }
-        }
     }
+    // components: {
+    //     MuiButton: {
+    //         styleOverrides: {
+    //             contained: { backgroundColor: '#1CB5E0' }
+    //         }
+    //     }
+    // }
 });
 
 // darkTheme.typography.h4 = {
