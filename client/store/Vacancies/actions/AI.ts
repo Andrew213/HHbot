@@ -16,7 +16,13 @@ export interface ERROR_VACANCIES {
     errMsg: string;
 }
 
+export interface BEEN_RESPONDED {
+    type: VacanciesType.BEEN_RESPONDED;
+    resume_id: string;
+}
+
 export type VacanciesActionI =
     | REQUEST_VACANCIES
     | RECEIVE_VACANCIES
+    | BEEN_RESPONDED
     | ERROR_VACANCIES;

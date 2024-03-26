@@ -11,20 +11,19 @@ class VacanciesAPI {
             const response = await api.getData(
                 `resumes/${resume_id}/similar_vacancies?page=${page}`
             );
-            // остановился тут. делаю вывод вакансий
             return response;
         } catch (error) {
-            throw new Error(error);
+            return error;
         }
     }
 
     // отправить отклик
     public async sendNegotiations(data) {
         try {
-            const response = await api.postData('negotiationss', data);
+            const response = await api.postData('negotiations', data);
             return response;
         } catch (error) {
-            throw new Error(error);
+            throw error;
         }
     }
 }

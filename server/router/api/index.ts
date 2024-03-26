@@ -27,10 +27,9 @@ class API {
         try {
             const response = await this.axiosInstance.get(endPoint);
 
-            return response.data;
+            return response;
         } catch (error) {
-            console.log(`api error in base `, error);
-            throw new Error(error);
+            throw error;
         }
     }
 
@@ -38,10 +37,9 @@ class API {
         try {
             const response = await this.axiosInstance.post(endPoint, data);
 
-            return response.data;
-        } catch (error) {
-            console.log(`api error in base `, error);
-            throw new Error(error);
+            return response;
+        } catch ({ response }) {
+            throw response;
         }
     }
 

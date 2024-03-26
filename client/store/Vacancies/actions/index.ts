@@ -4,7 +4,15 @@ import { VacanciesActionI } from './AI';
 import { VacanciesType } from './AT';
 import { RootState } from 'client/store';
 import axios from 'axios';
-import { receiveVacancies } from './AC';
+import { addToResponse, receiveVacancies } from './AC';
+
+export const addToResponseArray = (resume_id: string) => {
+    return async (
+        dispatch: ThunkDispatch<VacnciesStateT, void, VacanciesActionI>
+    ) => {
+        dispatch(addToResponse(resume_id));
+    };
+};
 
 export const getVacancies = (resume_id: string, page: number) => {
     return async (

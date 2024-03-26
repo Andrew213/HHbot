@@ -37,7 +37,19 @@ const SelectResume: React.FC = () => {
     }, [isAuth]);
 
     if (loading) {
-        return <Spiner />;
+        return (
+            <Grid
+                alignContent="center"
+                alignItems="center"
+                display="flex"
+                justifyContent="center"
+                sx={{
+                    height: 'calc(100vh - 80px)'
+                }}
+            >
+                <Spiner />
+            </Grid>
+        );
     }
 
     return (

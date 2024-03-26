@@ -3,18 +3,17 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import InfiniteLoader from 'react-window-infinite-loader';
 import useAction from 'client/hooks/useAction';
 import { useTypedSelector } from 'client/hooks/useTypedSelector';
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import VacancyItem from '../VacancyItem/VacancyItem';
 import Spiner from 'client/components/error-boundry/Spiner';
 import { useSearchParams } from 'react-router-dom';
 
-const VacanciesList: React.FC = () => {
-    const { user } = useTypedSelector(state => state.User);
+const VacanciesList: React.FC<{ message: string }> = ({ message }) => {
     const { loading, items, found } = useTypedSelector(
         state => state.Vacancies
     );
 
-    const [resumeId, setResumeId] = useState<string>();
+    const [resumeId, setResumeId] = useState<string>('');
 
     const [currentPage, setCurrentPage] = useState<number>(0);
 
@@ -79,10 +78,14 @@ const VacanciesList: React.FC = () => {
                                     <li
                                         style={{
                                             ...style,
-                                            paddingRight: '24px'
+                                            paddingRight: '34px'
                                         }}
                                     >
-                                        <VacancyItem {...items[index]} />
+                                        <VacancyItem
+                                            resume_id={resumeId}
+                                            message={message}
+                                            {...items[index]}
+                                        />
                                     </li>
                                 );
                             }}
@@ -94,4 +97,4 @@ const VacanciesList: React.FC = () => {
     );
 };
 
-export default VacanciesList;
+export default memo(VacanciesList);

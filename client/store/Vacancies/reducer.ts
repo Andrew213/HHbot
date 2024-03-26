@@ -2,7 +2,7 @@ import { VacnciesStateT } from './VacanciesStore';
 import { VacanciesActionI } from './actions/AI';
 import { VacanciesType } from './actions/AT';
 
-const VacanciesState: Partial<VacnciesStateT> = {};
+const VacanciesState: Partial<VacnciesStateT> = { responseIds: new Set() };
 
 export const VacanciesReducer = (
     state: Partial<VacnciesStateT> = VacanciesState,
@@ -14,7 +14,14 @@ export const VacanciesReducer = (
         case VacanciesType.RECEIVE_VACANCIES:
             return { ...state, ...action.payload, loading: false };
         case VacanciesType.ERROR_VACANCIES:
-            return { ...state, loading: false, errMsg: action.errMsg };
+            return { ...state, errMsg: action.errMsg };
+        case VacanciesType.BEEN_RESPONDED:
+            const copy = new Set(state.responseIds);
+            copy.add(action.resume_id);
+            return {
+                ...state,
+                responseIds: copy
+            };
         default:
             return state;
     }

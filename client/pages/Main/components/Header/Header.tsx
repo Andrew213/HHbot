@@ -29,7 +29,6 @@ const Header = () => {
 
     const [searchParams] = useSearchParams();
 
-    console.log('resumeList', user.resumeList);
     useEffect(() => {
         if (isAuth) {
             getUser();

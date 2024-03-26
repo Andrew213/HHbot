@@ -6,7 +6,7 @@ class userAPI {
             const response = await api.getData('me');
             return response;
         } catch (err) {
-            throw new Error(err);
+            throw err;
         }
     }
 
@@ -15,7 +15,7 @@ class userAPI {
             const response = await api.getData('resumes/mine');
             return response;
         } catch (err) {
-            throw new Error(err);
+            throw err;
         }
     }
 }

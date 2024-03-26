@@ -8,11 +8,11 @@ export function userRouter(router: Router) {
         async (request: Request, response: Response, next: NextFunction) => {
             await userApiServer
                 .getUser()
-                .then(res => {
-                    response.status(200).send(res);
+                .then(({ status, data }) => {
+                    response.status(status).send(data);
                 })
-                .catch(err => {
-                    response.status(403).send(err);
+                .catch(({ status, data }) => {
+                    response.status(status).send(data);
                 });
         }
     );
@@ -22,11 +22,11 @@ export function userRouter(router: Router) {
         async (request: Request, response: Response, next: NextFunction) => {
             await userApiServer
                 .getResumeList()
-                .then(res => {
-                    response.status(200).send(res);
+                .then(({ status, data }) => {
+                    response.status(status).send(data);
                 })
-                .catch(err => {
-                    response.status(403).send(err);
+                .catch(({ status, data }) => {
+                    response.status(status).send(data);
                 });
         }
     );

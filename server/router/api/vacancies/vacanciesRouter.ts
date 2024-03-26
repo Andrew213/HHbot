@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { NextFunction, Request, Response, Router } from 'express';
 import { vacanciesApiServer } from './vacancies';
 
@@ -20,10 +19,10 @@ export function vacanciesRouter(router: Router) {
             await vacanciesApiServer
                 .sendNegotiations(formData)
                 .then(res => {
-                    response.status(200).send(res);
+                    response.status(res.status).send(res.data);
                 })
-                .catch(err => {
-                    response.status(403).send(err);
+                .catch(({ status, data }) => {
+                    response.status(status).send(data);
                 });
         }
     );
@@ -38,11 +37,11 @@ export function vacanciesRouter(router: Router) {
                     resume_id as string,
                     page as unknown as number
                 )
-                .then(res => {
-                    response.status(200).send(res);
+                .then(({ status, data }) => {
+                    response.status(status).send(data);
                 })
-                .catch(err => {
-                    response.status(403).send(err);
+                .catch(({ status, data }) => {
+                    response.status(status).send(data);
                 });
         }
     );

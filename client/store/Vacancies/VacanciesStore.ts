@@ -39,4 +39,5 @@ export type VacnciesStateT = {
     alternate_url: string | null;
     errMsg?: string;
     found: number;
+    responseIds: Set<string>;
 };
