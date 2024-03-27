@@ -38,27 +38,19 @@ const darkTheme = createTheme({
     palette: {
         mode: 'dark'
     }
-    // components: {
-    //     MuiButton: {
-    //         styleOverrides: {
-    //             contained: { backgroundColor: '#1CB5E0' }
-    //         }
-    //     }
-    // }
 });
 
-// darkTheme.typography.h4 = {
-
-//     [darkTheme.breakpoints.up('sm')]: {
-//         fontSize: '1rem'
-//     },
-//     [darkTheme.breakpoints.up('md')]: {
-//         fontSize: '1.3rem'
-//     },
-//     [darkTheme.breakpoints.up('lg')]: {
-//         fontSize: '1.5rem'
-//     }
-// };
+darkTheme.typography.h6 = {
+    [darkTheme.breakpoints.up('sm')]: {
+        fontSize: '1rem'
+    },
+    [darkTheme.breakpoints.up('md')]: {
+        fontSize: '1.3rem'
+    },
+    [darkTheme.breakpoints.up('lg')]: {
+        fontSize: '1.5rem'
+    }
+};
 
 darkTheme.typography.h5 = {
     fontSize: '1rem',

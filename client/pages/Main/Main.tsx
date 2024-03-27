@@ -19,6 +19,8 @@ import useAction from 'client/hooks/useAction';
 import { useTypedSelector } from 'client/hooks/useTypedSelector';
 import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
+import { ProvideSearchContext } from './components/Search/SearchContext';
+import Search from './components/Search/Search';
 
 const actions = [
     { icon: <PlayCircleIcon color="success" />, name: 'Start' },
@@ -54,7 +56,7 @@ const Main = () => {
                 const data: {
                     vacancy_id: string;
                     resume_id: string;
-                    message?: string; // знак вопроса делает это свойство необязательным
+                    message?: string;
                 } = {
                     vacancy_id,
                     resume_id
@@ -106,8 +108,13 @@ const Main = () => {
     const [width] = useWindowSize();
 
     return (
-        <>
-            <Header />
+        <ProvideSearchContext>
+            <Header
+                message={message}
+                setMessage={setMessage}
+                setAutoResponseStart={setAutoResponseStart}
+                autoResponseStart={autoResponseStart}
+            />
             <Grid container spacing={4} paddingLeft={'40px'}>
                 {width >= 900 ? (
                     <Grid
@@ -118,11 +125,15 @@ const Main = () => {
                             position: 'relative'
                         }}
                     >
+                        <Search />
+
                         <Tooltip title="Введите сопроводительное, которое будет отправляться с откликом.">
                             <TextField
                                 label="Сопроводительное письмо (достаточно просто ввести)"
                                 sx={{
-                                    width: '100%'
+                                    width: '100%',
+                                    marginTop: 3,
+                                    marginBottom: 3
                                 }}
                                 multiline
                                 value={message}
@@ -140,8 +151,7 @@ const Main = () => {
                             sx={{
                                 width: 200,
                                 whiteSpace: 'nowrap',
-                                color: '#fff',
-                                marginTop: '20px'
+                                color: '#fff'
                             }}
                         >
                             {autoResponseStart
@@ -170,10 +180,14 @@ const Main = () => {
                 )}
 
                 <Grid xs={12} md={8} lg={8} item>
-                    <VacanciesList resume_id={resume_id} message={message} />
+                    <VacanciesList
+                        search_value={''}
+                        resume_id={resume_id}
+                        message={message}
+                    />
                 </Grid>
             </Grid>
-        </>
+        </ProvideSearchContext>
     );
 };
 

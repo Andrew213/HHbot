@@ -14,9 +14,9 @@ import axios from 'axios';
 import useAction from 'client/hooks/useAction';
 import { useTypedSelector } from 'client/hooks/useTypedSelector';
 import useWindowSize from 'client/hooks/useWondowResize';
-
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { vacancy } from 'client/store/Vacancies/VacanciesStore';
-import { memo, useEffect, useState } from 'react';
+import { memo, useState } from 'react';
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -83,6 +83,7 @@ const VacancyItem: React.FC<
     id,
     alternate_url,
     employer,
+    area,
     experience,
     message,
     resume_id
@@ -165,9 +166,19 @@ const VacancyItem: React.FC<
                         >
                             {showCurrency(salary)}
                         </Typography>
+
+                        <Typography mb={2}>
+                            <LocationOnIcon
+                                sx={{ marginRight: 0.5 }}
+                                fontSize="inherit"
+                            />
+                            {area.name}
+                        </Typography>
+
                         <Typography variant="caption" component="div" mb={2}>
                             {experience.name}
                         </Typography>
+
                         <Link href={employer.alternate_url} target="_blank">
                             {employer?.name}
                         </Link>

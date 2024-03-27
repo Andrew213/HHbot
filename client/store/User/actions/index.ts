@@ -1,6 +1,5 @@
 import { ThunkDispatch } from 'redux-thunk';
 import { UserActionI } from './AI';
-import { RootState } from 'client/store/RootReducers';
 import { userStateT } from '../userState';
 import { errorUser, receiveUser, requestUser } from './AC';
 import axios from 'axios';

@@ -1,3 +1,4 @@
+import querystring from 'querystring';
 import { api } from '..';
 
 class VacanciesAPI {
@@ -11,6 +12,21 @@ class VacanciesAPI {
             const response = await api.getData(
                 `resumes/${resume_id}/similar_vacancies?page=${page}`
             );
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    public async searchVacancies(text: string, page: number = 0) {
+        try {
+            const params = {
+                text,
+                page
+            };
+            const queryString = querystring.stringify(params);
+            const response = await api.getData(`vacancies?${queryString}`);
+
             return response;
         } catch (error) {
             throw error;

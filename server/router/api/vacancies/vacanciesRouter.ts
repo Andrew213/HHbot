@@ -3,6 +3,7 @@ import { vacanciesApiServer } from './vacancies';
 
 export function vacanciesRouter(router: Router) {
     //отправить отклик
+
     router.post(
         '/negotiations',
         async (request: Request, response: Response, next: NextFunction) => {
@@ -20,6 +21,23 @@ export function vacanciesRouter(router: Router) {
                 .sendNegotiations(formData)
                 .then(res => {
                     response.status(res.status).send(res.data);
+                })
+                .catch(({ status, data }) => {
+                    response.status(status).send(data);
+                });
+        }
+    );
+
+    //поиск по всем вакансиям
+    router.get(
+        '/search',
+        async (request: Request, response: Response, next: NextFunction) => {
+            const { text, page } = request.query;
+
+            await vacanciesApiServer
+                .searchVacancies(text as string, page as unknown as number)
+                .then(({ status, data }) => {
+                    response.status(status).send(data);
                 })
                 .catch(({ status, data }) => {
                     response.status(status).send(data);

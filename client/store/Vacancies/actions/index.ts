@@ -14,7 +14,41 @@ export const addToResponseArray = (resume_id: string) => {
     };
 };
 
-export const getVacancies = (resume_id: string, page: number) => {
+export const searchAllVacancies = (text: string, page: number) => {
+    return async (
+        dispatch: ThunkDispatch<VacnciesStateT, void, VacanciesActionI>,
+        getState: () => RootState
+    ) => {
+        try {
+            const { Vacancies } = getState();
+            dispatch({
+                type: VacanciesType.REQUEST_VACANCIES,
+                loading: !page ? true : !Vacancies.items
+            });
+
+            const response = await axios.get(
+                `/search?text=${text}&page=${page}`
+            );
+
+            if (response.status === 200) {
+                let items = response.data.items;
+                if (Vacancies.items && page > 0) {
+                    const oldVacancies = Vacancies.items;
+                    items = [...oldVacancies, ...items];
+                }
+                dispatch(receiveVacancies({ ...response.data, items }));
+            }
+        } catch (error) {
+            dispatch({
+                type: VacanciesType.ERROR_VACANCIES,
+                errMsg: error
+            });
+            console.log(`error in searchVacancies state`, error);
+        }
+    };
+};
+
+export const getSimilarVacancies = (resume_id: string, page: number) => {
     return async (
         dispatch: ThunkDispatch<VacnciesStateT, void, VacanciesActionI>,
         getState: () => RootState
@@ -24,7 +58,7 @@ export const getVacancies = (resume_id: string, page: number) => {
         try {
             dispatch({
                 type: VacanciesType.REQUEST_VACANCIES,
-                loading: !Vacancies.items
+                loading: !page ? true : !Vacancies.items
             });
 
             const response = await axios.get(
@@ -33,7 +67,7 @@ export const getVacancies = (resume_id: string, page: number) => {
 
             if (response.status === 200) {
                 let items = response.data.items;
-                if (Vacancies.items) {
+                if (Vacancies.items && page > 0) {
                     const oldVacancies = Vacancies.items;
                     items = [...oldVacancies, ...items];
                 }

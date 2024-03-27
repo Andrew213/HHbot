@@ -3,31 +3,56 @@ import AppBar from '@mui/material/AppBar';
 import {
     Box,
     Button,
+    IconButton,
     LinearProgress,
+    Menu,
+    MenuItem,
+    TextField,
     Toolbar,
     Typography,
     styled
 } from '@mui/material';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTypedSelector } from 'client/hooks/useTypedSelector';
 import useAction from 'client/hooks/useAction';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { getVacancies } from 'client/store/Vacancies/actions';
+import MenuIcon from '@mui/icons-material/Menu';
+import useWindowSize from 'client/hooks/useWondowResize';
+import MobileBar from '../MobileBar/MobileBar';
 
 const ToolbarStyled = styled(Toolbar)(({ theme }) => ({
     padding: '0 40px'
-    // textAlign: 'center',
-    // color: theme.palette.text.secondary
 }));
-const Header = () => {
+
+interface HeaderI {
+    message: string;
+    setMessage: (a: string) => void;
+    setAutoResponseStart: (a: boolean) => void;
+    autoResponseStart: boolean;
+}
+
+const Header: React.FC<HeaderI> = props => {
     const { getUser, logout, getResume } = useAction();
 
     const navigate = useNavigate();
 
     const { user, loading } = useTypedSelector(state => state.User);
+
     const { isAuth } = useTypedSelector(state => state.Login);
 
+    const [width] = useWindowSize();
+
     const [searchParams] = useSearchParams();
+
+    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>();
+
+    const handleOnMenuClick = (e: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(e.currentTarget);
+    };
+
+    const handleCloseMenu = () => {
+        setAnchorEl(null);
+    };
 
     useEffect(() => {
         if (isAuth) {
@@ -47,23 +72,54 @@ const Header = () => {
     return (
         <AppBar position="static" sx={{ marginBottom: 2, paddingLeft: 0 }}>
             <ToolbarStyled>
-                {/* <IconButton
-                    size="large"
-                    edge="start"
-                    color="inherit"
-                    aria-label="menu"
-                    sx={{ mr: 2 }}
-                >
-                    <MenuIcon />
-                </IconButton> */}
-                <Typography variant="h6" component="div" sx={{ mr: 1 }}>
-                    {user?.first_name}
-                </Typography>
-                <Typography variant="h6" component="div" sx={{ mr: 2 }}>
-                    {user?.last_name}
-                </Typography>
+                {width > 900 ? (
+                    <Box display="flex">
+                        <Typography
+                            variant="h6"
+                            component="div"
+                            sx={{ mr: 0.5 }}
+                        >
+                            {user?.first_name}
+                        </Typography>
+                        <Typography variant="h6" component="div" sx={{ mr: 2 }}>
+                            {user?.last_name}
+                        </Typography>
+                    </Box>
+                ) : (
+                    <>
+                        <IconButton
+                            onClick={handleOnMenuClick}
+                            aria-label="menu"
+                            id="long-button"
+                            aria-haspopup="true"
+                            size="large"
+                        >
+                            <MenuIcon fontSize="inherit" />
+                        </IconButton>
+                        <Menu
+                            anchorEl={anchorEl}
+                            open={!!anchorEl}
+                            onClose={handleCloseMenu}
+                            id="long-button"
+                        >
+                            <MenuItem>
+                                <Button>Резюме на HH</Button>
+                            </MenuItem>
+                            {/* Тут остановился. делаю адаптив меню */}
+                            <MenuItem>
+                                <TextField
+                                    size="small"
+                                    label="Сопроводительное"
+                                    multiline
+                                    placeholder="Просто ввести"
+                                />
+                            </MenuItem>
+                        </Menu>
+                    </>
+                )}
 
-                {user.resumeList &&
+                {width > 900 &&
+                    user.resumeList &&
                     user.resumeList
                         .filter(el => el.id === searchParams.get('resume'))
                         .map(el => {
@@ -73,11 +129,14 @@ const Header = () => {
                                     key={el.id}
                                     href={el.alternate_url}
                                     target="_blank"
+                                    size="small"
                                 >
                                     {el.title}
                                 </Button>
                             );
                         })}
+
+                {width < 900 && <MobileBar {...props} />}
 
                 <Button
                     onClick={() => {
@@ -86,9 +145,10 @@ const Header = () => {
                     }}
                     color="inherit"
                     variant="outlined"
+                    size={width <= 900 ? 'small' : 'medium'}
                     sx={{ ml: 'auto' }}
                 >
-                    Logout
+                    Выйти
                 </Button>
 
                 {/* <Menu

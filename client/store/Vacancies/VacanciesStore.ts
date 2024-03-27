@@ -27,6 +27,10 @@ export type vacancy = {
         responsibility: string | null; // Отрывок из обязанностей по вакансии, если они найдены в тексте описания
     };
 
+    area: {
+        name: string;
+    };
+
     alternate_url: string;
 };
 
