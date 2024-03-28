@@ -13,13 +13,17 @@ const AppRouter = () => {
     const navigate = useNavigate();
     const { loading } = useTypedSelector(state => state.Login);
 
-    const [searchParams, setSearchParams] = useSearchParams();
+    const [searchParams] = useSearchParams();
 
     const { isAuth } = useTypedSelector(state => state.Login);
 
     useEffect(() => {
         if (!isAuth && !searchParams.has('code')) {
             navigate('/login');
+        }
+
+        if (isAuth && !searchParams.has('resume')) {
+            navigate('/resumes');
         }
     }, [isAuth, searchParams]);
 

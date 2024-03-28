@@ -8,7 +8,9 @@ import {
     CircularProgress,
     Typography,
     styled,
-    Alert
+    Alert,
+    Chip,
+    Stack
 } from '@mui/material';
 import axios from 'axios';
 import useAction from 'client/hooks/useAction';
@@ -16,7 +18,7 @@ import { useTypedSelector } from 'client/hooks/useTypedSelector';
 import useWindowSize from 'client/hooks/useWondowResize';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { vacancy } from 'client/store/Vacancies/VacanciesStore';
-import { memo, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -27,7 +29,7 @@ const Item = styled(Paper)(({ theme }) => ({
     borderWidth: 1,
     borderImageSource: 'linear-gradient(to left, #e01cd5, #1CB5E0)',
     textAlign: 'center',
-    height: 560,
+    // height: 560,
     color: theme.palette.text.secondary
 }));
 
@@ -75,7 +77,12 @@ const showCurrency = (salary: vacancy['salary']) => {
 };
 
 const VacancyItem: React.FC<
-    vacancy & { message: string; resume_id: string }
+    vacancy & {
+        message: string;
+        resume_id: string;
+        setSize: (a: number, b: any) => void;
+        index: number;
+    }
 > = ({
     name,
     salary,
@@ -86,7 +93,11 @@ const VacancyItem: React.FC<
     area,
     experience,
     message,
-    resume_id
+    resume_id,
+    setSize,
+    index,
+    has_test,
+    response_letter_required
 }) => {
     const {
         user: { resumeList }
@@ -125,9 +136,15 @@ const VacancyItem: React.FC<
         }
     };
 
+    const itemRef = useRef<any>();
+
+    useEffect(() => {
+        setSize(index, itemRef.current.getBoundingClientRect().height);
+    }, [setSize, index]);
+
     return (
         <>
-            <Item variant="outlined" itemID={id} key={id}>
+            <Item ref={itemRef} variant="outlined" itemID={id} key={id}>
                 <Grid
                     display="flex"
                     height="100%"
@@ -148,7 +165,25 @@ const VacancyItem: React.FC<
                             >
                                 {name}
                             </Typography>
-                            {width > 1260 && (
+                            {(has_test || response_letter_required) && (
+                                <Stack ml={10} gap={2} alignItems="center">
+                                    {has_test && (
+                                        <Chip
+                                            color="error"
+                                            size="small"
+                                            label="Тестовое"
+                                        />
+                                    )}
+                                    {response_letter_required && (
+                                        <Chip
+                                            size="small"
+                                            color="error"
+                                            label="Cопроводительное"
+                                        />
+                                    )}
+                                </Stack>
+                            )}
+                            {width > 1260 && !has_test && (
                                 <ButtonStyled2
                                     href={alternate_url}
                                     variant="outlined"
@@ -207,24 +242,36 @@ const VacancyItem: React.FC<
                         justifyContent="space-between"
                         alignItems="center"
                     >
-                        <ButtonStyled
-                            onClick={() => {
-                                onRespondHandler(id);
-                            }}
-                            disabled={responseIds.has(id)}
-                            variant="contained"
-                        >
-                            {respondLoading ? (
-                                <CircularProgress
-                                    size={24}
-                                    sx={{ color: '#e01cd5' }}
-                                />
-                            ) : (
-                                'Откликнуться'
-                            )}
-                        </ButtonStyled>
-
-                        {width <= 1260 && (
+                        {has_test ? (
+                            <Button
+                                href={alternate_url}
+                                variant="contained"
+                                target="_blank"
+                            >
+                                Требуется пройти тестовое. Открыть на HH
+                            </Button>
+                        ) : (
+                            <ButtonStyled
+                                onClick={() => {
+                                    onRespondHandler(id);
+                                }}
+                                disabled={
+                                    responseIds.has(id) ||
+                                    (!message && response_letter_required)
+                                }
+                                variant="contained"
+                            >
+                                {respondLoading ? (
+                                    <CircularProgress
+                                        size={24}
+                                        sx={{ color: '#e01cd5' }}
+                                    />
+                                ) : (
+                                    'Откликнуться'
+                                )}
+                            </ButtonStyled>
+                        )}
+                        {width <= 1260 && !has_test && (
                             <ButtonStyled2
                                 href={alternate_url}
                                 variant="outlined"

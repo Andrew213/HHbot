@@ -1,19 +1,20 @@
-import { FixedSizeList as List } from 'react-window';
+import { VariableSizeList as List } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import InfiniteLoader from 'react-window-infinite-loader';
 import useAction from 'client/hooks/useAction';
 import { useTypedSelector } from 'client/hooks/useTypedSelector';
-import { memo, useEffect } from 'react';
+import { memo, useCallback, useEffect, useRef } from 'react';
 import VacancyItem from '../VacancyItem/VacancyItem';
 import Spiner from 'client/components/error-boundry/Spiner';
-import { Box, Icon } from '@mui/material';
+import { Box } from '@mui/material';
 import { useSearch } from '../Search/SearchContext';
+import useWindowSize from 'client/hooks/useWondowResize';
 
 const VacanciesList: React.FC<{
     message: string;
     resume_id: string;
-    search_value: string;
-}> = ({ message, resume_id }) => {
+    firstBr: number;
+}> = ({ message, resume_id, firstBr }) => {
     const { loading, items, pages, found } = useTypedSelector(
         state => state.Vacancies
     );
@@ -21,6 +22,18 @@ const VacanciesList: React.FC<{
     const { searchValue, currentPage, setCurrentPage } = useSearch();
 
     const { getSimilarVacancies, searchAllVacancies } = useAction();
+
+    const sizeMap = useRef({});
+    const listRef: any = useRef();
+
+    const setSize = useCallback((index, size) => {
+        sizeMap.current = { ...sizeMap.current, [index]: size };
+        listRef.current.resetAfterIndex(index);
+    }, []);
+
+    const getSize = index => sizeMap.current[index] + 50 || 50;
+
+    const [width] = useWindowSize();
 
     useEffect(() => {
         if (resume_id) {
@@ -50,21 +63,19 @@ const VacanciesList: React.FC<{
         );
     };
 
+    const heightOfHeader = width >= firstBr ? 80 : 152; // высота хедера или хедер + инпут поиска
+
     if (loading) {
         return (
             <Box
                 display="flex"
                 alignItems="center"
                 justifyContent="center"
-                height="calc(100vh - 80px)"
+                height={`calc(100vh - ${heightOfHeader}px)`}
             >
                 <Spiner />
             </Box>
         );
-    }
-
-    if (!items.length) {
-        return <Icon />;
     }
 
     return (
@@ -74,10 +85,10 @@ const VacanciesList: React.FC<{
             isItemLoaded={isItemLoaded}
             threshold={3}
         >
-            {({ onItemsRendered, ref }) => (
+            {({ onItemsRendered }) => (
                 <AutoSizer
                     style={{
-                        height: 'calc(100vh - 80px)'
+                        height: `calc(100vh - ${heightOfHeader}px)`
                     }}
                     disableWidth
                 >
@@ -85,9 +96,9 @@ const VacanciesList: React.FC<{
                         <List
                             innerElementType="ul"
                             itemCount={items?.length}
-                            itemSize={600}
+                            itemSize={getSize}
                             onItemsRendered={onItemsRendered}
-                            ref={ref}
+                            ref={listRef}
                             height={height}
                             width="auto"
                         >
@@ -96,12 +107,17 @@ const VacanciesList: React.FC<{
                                     <li
                                         style={{
                                             ...style,
-                                            paddingRight: '34px'
+                                            paddingRight:
+                                                width >= firstBr
+                                                    ? '24px'
+                                                    : '40px'
                                         }}
                                     >
                                         <VacancyItem
                                             resume_id={resume_id}
                                             message={message}
+                                            setSize={setSize}
+                                            index={index}
                                             {...items[index]}
                                         />
                                     </li>

@@ -3,11 +3,7 @@ import AppBar from '@mui/material/AppBar';
 import {
     Box,
     Button,
-    IconButton,
     LinearProgress,
-    Menu,
-    MenuItem,
-    TextField,
     Toolbar,
     Typography,
     styled
@@ -16,19 +12,21 @@ import { useEffect, useState } from 'react';
 import { useTypedSelector } from 'client/hooks/useTypedSelector';
 import useAction from 'client/hooks/useAction';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import MenuIcon from '@mui/icons-material/Menu';
 import useWindowSize from 'client/hooks/useWondowResize';
 import MobileBar from '../MobileBar/MobileBar';
+import MobileMenu from '../MobileMenu/MobileMenu';
 
 const ToolbarStyled = styled(Toolbar)(({ theme }) => ({
-    padding: '0 40px'
+    paddingLeft: theme.spacing(5),
+    paddingRight: theme.spacing(5)
 }));
 
 interface HeaderI {
     message: string;
     setMessage: (a: string) => void;
-    setAutoResponseStart: (a: boolean) => void;
+    setAutoResponseStart: (a: (prev: boolean) => boolean) => void;
     autoResponseStart: boolean;
+    count: number;
 }
 
 const Header: React.FC<HeaderI> = props => {
@@ -44,15 +42,13 @@ const Header: React.FC<HeaderI> = props => {
 
     const [searchParams] = useSearchParams();
 
-    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>();
+    const [resumeId, setResumeId] = useState('');
 
-    const handleOnMenuClick = (e: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(e.currentTarget);
-    };
-
-    const handleCloseMenu = () => {
-        setAnchorEl(null);
-    };
+    useEffect(() => {
+        if (searchParams.has('resume')) {
+            setResumeId(searchParams.get('resume') as string);
+        }
+    }, [searchParams]);
 
     useEffect(() => {
         if (isAuth) {
@@ -86,42 +82,17 @@ const Header: React.FC<HeaderI> = props => {
                         </Typography>
                     </Box>
                 ) : (
-                    <>
-                        <IconButton
-                            onClick={handleOnMenuClick}
-                            aria-label="menu"
-                            id="long-button"
-                            aria-haspopup="true"
-                            size="large"
-                        >
-                            <MenuIcon fontSize="inherit" />
-                        </IconButton>
-                        <Menu
-                            anchorEl={anchorEl}
-                            open={!!anchorEl}
-                            onClose={handleCloseMenu}
-                            id="long-button"
-                        >
-                            <MenuItem>
-                                <Button>Резюме на HH</Button>
-                            </MenuItem>
-                            {/* Тут остановился. делаю адаптив меню */}
-                            <MenuItem>
-                                <TextField
-                                    size="small"
-                                    label="Сопроводительное"
-                                    multiline
-                                    placeholder="Просто ввести"
-                                />
-                            </MenuItem>
-                        </Menu>
-                    </>
+                    <MobileMenu
+                        message={props.message}
+                        setMessage={props.setMessage}
+                        resume_id={resumeId}
+                    />
                 )}
 
                 {width > 900 &&
                     user.resumeList &&
                     user.resumeList
-                        .filter(el => el.id === searchParams.get('resume'))
+                        .filter(el => el.id === resumeId)
                         .map(el => {
                             return (
                                 <Button
@@ -150,14 +121,6 @@ const Header: React.FC<HeaderI> = props => {
                 >
                     Выйти
                 </Button>
-
-                {/* <Menu
-                anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right'
-                }}
-                open={isMenuOpen}
-            ></Menu> */}
             </ToolbarStyled>
         </AppBar>
     );

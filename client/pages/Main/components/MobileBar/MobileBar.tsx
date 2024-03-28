@@ -1,33 +1,32 @@
-import { Box, Button, IconButton } from '@mui/material';
+import { Box, Button, IconButton, Tooltip, Typography } from '@mui/material';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import { useState } from 'react';
 import useWindowSize from 'client/hooks/useWondowResize';
 
 interface MobileBarI {
-    message: string;
-    setMessage: (a: string) => void;
-    setAutoResponseStart: (a: boolean) => void;
+    setAutoResponseStart: (a: (prev: boolean) => boolean) => void;
     autoResponseStart: boolean;
+    count: number;
 }
 
 const MobileBar: React.FC<MobileBarI> = ({
-    message,
-    setMessage,
     autoResponseStart,
-    setAutoResponseStart
+    setAutoResponseStart,
+    count
 }) => {
-    const [foo, setFoo] = useState(false);
     const [width] = useWindowSize();
     return (
-        <Box>
+        <Box display="flex" alignItems="center">
             {width <= 500 ? (
                 <IconButton
-                    onClick={() => setFoo(prev => !prev)}
+                    onClick={() => {
+                        setAutoResponseStart(prev => !prev);
+                    }}
                     size="large"
-                    color={foo ? 'error' : 'success'}
+                    color={autoResponseStart ? 'error' : 'success'}
                 >
-                    {foo ? (
+                    {autoResponseStart ? (
                         <StopCircleIcon fontSize="inherit" />
                     ) : (
                         <PlayCircleIcon fontSize="inherit" />
@@ -38,34 +37,28 @@ const MobileBar: React.FC<MobileBarI> = ({
                     <Button
                         size="small"
                         variant="contained"
-                        color={foo ? 'error' : 'success'}
+                        color={autoResponseStart ? 'error' : 'success'}
                         sx={{
                             width: '130px',
                             color: '#fff'
                         }}
-                        onClick={() => setFoo(prev => !prev)}
+                        onClick={() => setAutoResponseStart(prev => !prev)}
                         startIcon={
-                            foo ? <StopCircleIcon /> : <PlayCircleIcon />
+                            autoResponseStart ? (
+                                <StopCircleIcon />
+                            ) : (
+                                <PlayCircleIcon />
+                            )
                         }
                     >
-                        {foo ? 'Стоп' : 'Автоотклик'}
+                        {autoResponseStart ? 'Стоп' : 'Автоотклик'}
                     </Button>
-                    {/* <Button
-                        size="small"
-                        variant="contained"
-                        color={foo ? 'error' : 'success'}
-                        sx={{
-                            width: '130px',
-                            color: '#fff'
-                        }}
-                        //    onClick={() => setFoo(prev => !prev)}
-                        startIcon={
-                            foo ? <StopCircleIcon /> : <PlayCircleIcon />
-                        }
-                    >
-                        Сопроводительное
-                    </Button> */}
                 </>
+            )}
+            {autoResponseStart && (
+                <Tooltip title="Отправленных автооткликов">
+                    <Typography ml={2}>{count}</Typography>
+                </Tooltip>
             )}
         </Box>
     );
