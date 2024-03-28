@@ -27,14 +27,12 @@ if (isDev) {
 
 export function startApp({ server }: Options) {
     Loadable.preloadAll().then(() => {
-        if (isDev) {
-            server.listen(PORT, () => {
-                console.log(
-                    console.log(makeStartLogsText(APP_HOSTS, 'http', PORT))
-                );
-            });
+        server.listen(PORT, () => {
+            console.log(
+                console.log(makeStartLogsText(APP_HOSTS, 'http', PORT))
+            );
+        });
 
-            return;
-        }
+        return;
     });
 }

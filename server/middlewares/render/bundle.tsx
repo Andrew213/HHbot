@@ -42,6 +42,7 @@ interface PageHtmlParams {
 const getPageHtml = (params: PageHtmlParams) => {
     const { bundleName, bundleHtml, data, store } = params;
     const { baseUrl } = cfg.default.static;
+    console.log(`\n\n\n CFG  `, cfg);
     const bundleFilePath = `${baseUrl}${bundleName}.bundle`;
 
     const vendorsFilePath = `${baseUrl}_/${vendorsMeta.name}`;

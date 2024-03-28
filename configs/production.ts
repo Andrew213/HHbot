@@ -1,10 +1,12 @@
 import { AppConfig } from 'cfg';
 
 const config: AppConfig = {
+    langs: ['ru'],
+
     static: {
-        // тут можно указать ссылку на s3 хранилище
-        baseUrl: '/static/'
+        baseUrl: '/static/',
+        version: ''
     }
 };
 
-module.exports = config;
+export default config;

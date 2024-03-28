@@ -1,3 +1,4 @@
+import cfg from '../../lib/cfg';
 import { config } from 'dotenv';
 import flow from 'lodash.flow';
 import webpack from 'webpack';
@@ -10,9 +11,6 @@ import {
 } from '../settings';
 
 config();
-
-// eslint-disable-next-line
-const cfg = require('../../lib/cfg').default;
 
 function getConfig(lang: string, index: number): webpack.Configuration {
     return flow([

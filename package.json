@@ -4,21 +4,44 @@
     "description": "",
     "main": "index.js",
     "scripts": {
+        "build": "npm install -f && npm run build:dev:vendors && better-npm-run build:production",
+        "build:production:client": "better-npm-run build:production:client",
         "init": "npm install && npm run build:dev:vendors",
         "lint": "npm-run-all fix:lint:*",
         "dev": "better-npm-run dev",
         "hosts:aliases": "better-npm-run hosts:aliases",
         "watch:ssr": "better-npm-run watch:ssr",
+        "build:ssr": "webpack --mode=production --config webpack/config/ssr.config.ts",
         "build:configs": "tsc --project configs",
         "build:server": "tsc --project server",
+        "build:production:vendors": "better-npm-run build:production:vendors",
         "build:dev:vendors": "NODE_ENV=development webpack --mode development --config webpack/config/vendors.config.ts",
-        "start:dev": "NODE_PATH=./dist CFG_DIR=$(pwd)/dist/configs node dist/server/index.js"
+        "start:dev": "NODE_PATH=./dist CFG_DIR=$(pwd)/dist/configs nodemon dist/server/index.js",
+        "start:prod": "NODE_ENV=production CFG_DIR=$(pwd)/dist/configs/ NODE_PATH=$(pwd)/dist node dist/server/index.js"
     },
     "betterScripts": {
         "dev": {
-            "command": "npm-run-all hosts:aliases build:configs build:server && npm-run-all --parallel --print-name watch:ssr start:dev",
+            "command": "npm-run-all  build:configs build:server && npm-run-all --parallel --print-name watch:ssr start:dev",
             "env": {
                 "NODE_ENV": "development"
+            }
+        },
+        "build:production": {
+            "command": "npm-run-all build:configs build:server build:dev:vendors build:ssr build:production:client",
+            "env": {
+                "NODE_ENV": "production"
+            }
+        },
+        "build:production:client": {
+            "command": "webpack --mode=production --config webpack/config/client.config.ts",
+            "env": {
+                "NODE_ENV": "production"
+            }
+        },
+        "build:production:vendors": {
+            "command": "webpack --mode=production --config webpack/config/vendors.config.ts",
+            "env": {
+                "NODE_ENV": "production"
             }
         },
         "hosts:aliases": {
@@ -112,6 +135,7 @@
         "merge-options": "^3.0.4",
         "mini-css-extract-plugin": "^2.8.0",
         "node-sass": "^9.0.0",
+        "nodemon": "^3.1.0",
         "npm": "^10.4.0",
         "npm-run-all": "^4.1.5",
         "null-loader": "^4.0.1",
@@ -141,5 +165,9 @@
     },
     "peerDependencies": {
         "@types/node": "^20.11.16"
-    }
+    },
+    "directories": {
+        "lib": "lib"
+    },
+    "keywords": []
 }

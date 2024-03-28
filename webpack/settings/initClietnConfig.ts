@@ -6,11 +6,21 @@ import { join } from 'path';
 import { TsconfigPathsPlugin } from 'tsconfig-paths-webpack-plugin';
 import webpack, { Configuration } from 'webpack';
 
-import { CLIENT_DIR } from '../assets/dir';
+import { CLIENT_DIR, DIST_DIR, ROOT_DIR } from '../assets/dir';
+
+// console.log(`\n DIST_DIR \n `, DIST_DIR);
+// console.log(`\n CLIENT_DIR \n `, CLIENT_DIR);
+// console.log(`\n ROOT_DIR \n `, ROOT_DIR);
 
 import { ENVS } from '../assets/env';
 
 const { __DEV__, __PROD__ } = ENVS;
+
+const vendorsManifest = require(join(
+    DIST_DIR,
+    'webpack',
+    'vendors-manifest.json'
+).replace('dist/dist', 'dist'));
 
 export default ({ lang, index }) =>
     (webpackConfig: Configuration): Configuration => {
@@ -35,9 +45,8 @@ export default ({ lang, index }) =>
                 filename: `[name].bundle.${lang}.js`,
                 library: 'Client',
                 libraryTarget: 'var',
-                publicPath: __DEV__
-                    ? '/static/'
-                    : `https://storage.yandexcloud.net/path/to/S3/${process.env.APP_VERSION}/client/`
+                path: join(DIST_DIR, 'client'),
+                publicPath: '/static/'
             },
             resolve: {
                 alias: {
@@ -67,11 +76,10 @@ export default ({ lang, index }) =>
             },
             plugins: [
                 // new webpack.DllReferencePlugin({
-                //     context: ROOT_DIR
-                //     // manifest: vendorsManifest,
+                //     context: ROOT_DIR,
+                //     manifest: vendorsManifest
                 // }),
                 new webpack.ProgressPlugin(),
-                // new CheckerPlugin(),
                 new webpack.DefinePlugin({
                     'process.env': JSON.stringify(process.env)
                 }),

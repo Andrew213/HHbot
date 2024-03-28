@@ -17,6 +17,8 @@ export interface Resp extends Response {
 export default (req: Request, res: Resp, next: NextFunction) => {
     // прокидываю ф-ю рендера в объект Response\
     // далее вызываю её в server/controllers/app.ts
+    console.log('\n\n\n INSIDE2 server/middlewares/render/render.ts');
+
     res.renderBundle = (bundleName: string, data: DataFromServerSide) => {
         const location = req.url;
 

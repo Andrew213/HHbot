@@ -11,15 +11,28 @@ function getWebpackMiddlewares(
     config: webpack.Configuration,
     index: number
 ): RequestHandler[] {
-    const compiler = webpack({ ...config, mode: 'development' });
+    const compiler = webpack({ ...config, mode: 'production' });
 
     return [
         devMiddleware(compiler, {
             publicPath: config.output!.publicPath!
-        }),
-        hotMiddleware(compiler, { path: `/__webpack_hmr_${index}` })
+        })
     ];
 }
+
+// function getWebpackMiddlewares(
+//     config: webpack.Configuration,
+//     index: number
+// ): RequestHandler[] {
+//     const compiler = webpack({ ...config, mode: 'development' });
+
+//     return [
+//         devMiddleware(compiler, {
+//             publicPath: config.output!.publicPath!
+//         }),
+//         hotMiddleware(compiler, { path: `/__webpack_hmr_${index}` })
+//     ];
+// }
 
 export default [
     ...webpackConfigs.reduce(
