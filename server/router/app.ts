@@ -1,8 +1,9 @@
 import { ErrorRequestHandler, RequestHandler, Router } from 'express';
-import { cookieParser } from 'server/middlewares';
-import { ROUTES } from 'client/routes';
-import { renderApp } from 'server/controllers';
-import auth from 'server/middlewares/auth';
+import cookieParserMiddleware from 'cookie-parser';
+import { ROUTES } from '../../client/src/routes';
+import auth from '../middlewares/auth';
+
+const cookieParser: RequestHandler = cookieParserMiddleware();
 
 const middlewares: Array<RequestHandler | ErrorRequestHandler> = [
     cookieParser,
@@ -18,5 +19,5 @@ const allRoutes = (function flatRoutes(routesMap: object): string[] {
 })(ROUTES);
 
 export function appRoutes(router: Router) {
-    router.get(allRoutes, middlewares, renderApp);
+    router.get(allRoutes, middlewares);
 }

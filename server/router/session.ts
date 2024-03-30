@@ -3,9 +3,16 @@ import { NextFunction, Request, Response, Router } from 'express';
 import { api } from './api';
 
 export function sessionRouter(router: Router) {
+    router.get(
+        '/api/session/check',
+        async (request: Request, response: Response) => {
+            response.status(200).send(!!request.cookies.access_token);
+        }
+    );
+
     router.post(
-        '/token',
-        async (request: Request, response: Response, next: NextFunction) => {
+        '/api/session/token',
+        async (request: Request, response: Response) => {
             const urlData = new URLSearchParams();
 
             urlData.append('client_id', process.env.CLIENT_ID as string);
@@ -25,6 +32,8 @@ export function sessionRouter(router: Router) {
                 })
                 .then(async res => {
                     if (res.data.access_token) {
+                        console.log(`HERE`);
+
                         const tokenCreationTimestamp = Date.now();
                         const tokenExpirationTimeInMs =
                             res.data.expires_in * 1000;
@@ -32,12 +41,18 @@ export function sessionRouter(router: Router) {
                         // время когда токен истечет
                         response.cookie(
                             'token_expiration_ms',
-                            tokenExpirationTimeInMs + tokenCreationTimestamp
+                            tokenExpirationTimeInMs + tokenCreationTimestamp,
+                            {
+                                httpOnly: true,
+                                secure: true,
+                                sameSite: 'none'
+                            }
                         );
                         response.cookie('access_token', res.data.access_token, {
                             maxAge: res.data.expires_in * 1000, // Время жизни в миллисекундах
                             httpOnly: true,
-                            secure: true
+                            secure: true,
+                            sameSite: 'none'
                         });
 
                         response.cookie(
@@ -45,7 +60,8 @@ export function sessionRouter(router: Router) {
                             res.data.refresh_token,
                             {
                                 httpOnly: true,
-                                secure: true
+                                secure: true,
+                                sameSite: 'none'
                             }
                         );
                         api.setAuthHeader(res.data.access_token);
@@ -60,7 +76,7 @@ export function sessionRouter(router: Router) {
     );
 
     router.delete(
-        '/logout',
+        '/api/session/logout',
         async (request: Request, response: Response, next: NextFunction) => {
             await axios
                 .delete('https://api.hh.ru/oauth/token', {
@@ -69,9 +85,21 @@ export function sessionRouter(router: Router) {
                     }
                 })
                 .then(res => {
-                    response.clearCookie('access_token');
-                    response.clearCookie('refresh_token');
-                    response.clearCookie('token_expiration_ms');
+                    response.clearCookie('access_token', {
+                        httpOnly: true,
+                        secure: true,
+                        sameSite: 'none'
+                    });
+                    response.clearCookie('refresh_token', {
+                        httpOnly: true,
+                        secure: true,
+                        sameSite: 'none'
+                    });
+                    response.clearCookie('token_expiration_ms', {
+                        httpOnly: true,
+                        secure: true,
+                        sameSite: 'none'
+                    });
                     response.status(204).send('OK');
                     response.end();
                 })

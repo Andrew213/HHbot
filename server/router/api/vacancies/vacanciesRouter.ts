@@ -5,7 +5,7 @@ export function vacanciesRouter(router: Router) {
     //отправить отклик
 
     router.post(
-        '/negotiations',
+        '/api/vacancies/negotiations',
         async (request: Request, response: Response, next: NextFunction) => {
             const { vacancy_id, resume_id } = request.body;
 
@@ -30,7 +30,7 @@ export function vacanciesRouter(router: Router) {
 
     //поиск по всем вакансиям
     router.get(
-        '/search',
+        '/api/vacancies/search',
         async (request: Request, response: Response, next: NextFunction) => {
             const { text, page } = request.query;
 
@@ -47,7 +47,7 @@ export function vacanciesRouter(router: Router) {
 
     // получаю список вакансий
     router.get(
-        '/vacancies',
+        '/api/vacancies',
         async (request: Request, response: Response, next: NextFunction) => {
             const { resume_id, page } = request.query;
             await vacanciesApiServer

@@ -1,10 +1,11 @@
 import axios from 'axios';
 import { NextFunction, Request, Response, Router } from 'express';
 import { userApiServer } from './user';
+import auth from '../../../middlewares/auth';
 
 export function userRouter(router: Router) {
     router.get(
-        '/user/me',
+        '/api/user/me',
         async (request: Request, response: Response, next: NextFunction) => {
             await userApiServer
                 .getUser()
@@ -18,7 +19,8 @@ export function userRouter(router: Router) {
     );
 
     router.get(
-        '/user/resume',
+        '/api/user/resume',
+        auth,
         async (request: Request, response: Response, next: NextFunction) => {
             await userApiServer
                 .getResumeList()

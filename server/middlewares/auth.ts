@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { api } from 'server/router/api';
+import { api } from '../router/api';
 const auth = (request: Request, response: Response, next: NextFunction) => {
     const cookies = request.cookies;
 

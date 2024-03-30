@@ -17,15 +17,15 @@
         "resolveJsonModule": true,
         "paths": {
             "@mui/styled-engine": ["./node_modules/@mui/styled-engine-sc"],
-            "@/*": ["./client/src/*"],
-            "@styles/*": ["./client/src/styles/*"],
-            "@components/*": ["./client/src/components/*"],
-            "@pages/*": ["./client/src/pages/*"],
-            "@fonts/*": ["./client/src/fonts/*"]
+            "@/*": ["src/*"],
+            "@styles/*": ["src/styles/*"],
+            "@components/*": ["src/components/*"],
+            "@pages/*": ["src/pages/*"],
+            "@fonts/*": ["src/fonts/*"]
         },
         "skipLibCheck": true,
         "experimentalDecorators": true,
-        "typeRoots": ["./@types", "node_modules/@types"],
+        "typeRoots": ["node_modules/@types"],
 
         "baseUrl": "."
     },
