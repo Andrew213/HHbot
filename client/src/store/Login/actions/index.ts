@@ -8,18 +8,25 @@ import { api } from '../../../api';
 export const checkAuth = () => {
     return async (dispatch: ThunkDispatch<LoginStateT, void, LoginActionI>) => {
         try {
+            dispatch({
+                type: LoginActionType.REQUEST_TOKEN,
+                loading: true
+            });
             const response = await api.get(
                 `${import.meta.env.VITE_CLIENT_HOST}/api/session/check`
             );
-
-            console.log(`response `, response);
 
             dispatch({
                 type: LoginActionType.CHECK_AUTH,
                 isAuth: response.data
             });
             return response.data;
-        } catch (err) {}
+        } catch (err) {
+            dispatch({
+                type: LoginActionType.FETCH_LOGIN_ERROR,
+                errMsg: err
+            });
+        }
     };
 };
 

@@ -1,5 +1,5 @@
 export type LoginStateT = {
-    isAuth?: boolean;
+    isAuth: boolean;
     errMsg: string;
     loading: boolean;
 };

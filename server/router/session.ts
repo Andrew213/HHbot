@@ -32,8 +32,6 @@ export function sessionRouter(router: Router) {
                 })
                 .then(async res => {
                     if (res.data.access_token) {
-                        console.log(`HERE`);
-
                         const tokenCreationTimestamp = Date.now();
                         const tokenExpirationTimeInMs =
                             res.data.expires_in * 1000;
@@ -69,7 +67,7 @@ export function sessionRouter(router: Router) {
                     response.status(200).send(res.data);
                 })
                 .catch(err => {
-                    console.log(`err `, err);
+                    console.log(`err in server session.ts`, err);
                     response.status(404).send(err);
                 });
         }

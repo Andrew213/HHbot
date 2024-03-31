@@ -14,7 +14,7 @@ export const LoginReducer = (
 ): LoginStateT => {
     switch (action.type) {
         case LoginActionType.REQUEST_TOKEN:
-            return { ...state, loading: true, isAuth: true };
+            return { ...state, loading: true };
         case LoginActionType.RECEIVE_TOKEN:
             return { ...state, loading: false, isAuth: true };
         case LoginActionType.FETCH_LOGIN_ERROR:

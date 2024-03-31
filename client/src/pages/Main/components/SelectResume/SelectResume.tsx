@@ -3,11 +3,7 @@ import Spiner from '@/components/error-boundry/Spiner';
 import useAction from '@/hooks/useAction';
 import { useTypedSelector } from '@/hooks/useTypedSelector';
 import { useEffect } from 'react';
-import {
-    useSearchParams,
-    useNavigate,
-    createSearchParams
-} from 'react-router-dom';
+import { useNavigate, createSearchParams } from 'react-router-dom';
 
 const SelectResume: React.FC = () => {
     const {
@@ -15,20 +11,11 @@ const SelectResume: React.FC = () => {
         loading
     } = useTypedSelector(state => state.User);
 
-    const { getTokens, getResume } = useAction();
+    const { getResume } = useAction();
 
     const { isAuth } = useTypedSelector(state => state.Login);
 
-    const [searchParams, setSearchParams] = useSearchParams();
-
     const navigate = useNavigate();
-
-    useEffect(() => {
-        if (searchParams.has('code')) {
-            getTokens(searchParams.get('code') as string);
-            setSearchParams('');
-        }
-    }, [searchParams]);
 
     useEffect(() => {
         if (isAuth) {

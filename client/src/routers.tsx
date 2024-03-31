@@ -8,35 +8,43 @@ import Login from './pages/Login/Login';
 import useAction from './hooks/useAction';
 import { Box, LinearProgress } from '@mui/material';
 import SelectResume from './pages/Main/components/SelectResume/SelectResume';
-import axios from 'axios';
 
 const AppRouter = () => {
     const navigate = useNavigate();
     const { loading } = useTypedSelector(state => state.Login);
 
-    const [searchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
 
-    const { checkAuth } = useAction();
+    const { checkAuth, getTokens } = useAction();
 
-    // const [checkAuth, setCheckAuth] = useState(false);
+    const [isAuth, setIsAuth] = useState<boolean | null>(null);
 
     useEffect(() => {
         const getAuth = async () => {
-            const isAuth = await checkAuth();
-
-            if (!isAuth && !searchParams.has('code')) {
-                navigate('/login');
-            }
-
-            console.log(`getAuth `, isAuth);
-
-            if (!!isAuth && !searchParams.has('resume')) {
-                navigate('/resumes');
-            }
+            const isAuth1 = await checkAuth();
+            setIsAuth(!!isAuth1);
         };
 
-        getAuth();
-    }, []);
+        if (!searchParams.has('code')) {
+            getAuth();
+        }
+    }, [searchParams]);
+
+    useEffect(() => {
+        if (isAuth !== null && !isAuth) {
+            navigate(ROUTES.LOGIN.INDEX);
+        }
+    }, [isAuth]);
+
+    useEffect(() => {
+        const exchangeToken = async () => {
+            await getTokens(searchParams.get('code') as string);
+            setSearchParams('');
+        };
+        if (searchParams.has('code')) {
+            exchangeToken();
+        }
+    }, [searchParams]);
 
     if (loading) {
         return (
@@ -48,7 +56,10 @@ const AppRouter = () => {
 
     return (
         <Routes>
-            <Route path={ROUTES.INDEX_REDIRECT.INDEX} element={<Main />} />
+            {isAuth && (
+                <Route path={ROUTES.INDEX_REDIRECT.INDEX} element={<Main />} />
+            )}
+
             <Route path={ROUTES.LOGIN.INDEX} element={<Login />} />
             <Route
                 path={ROUTES.SELECT_RESUME.INDEX}

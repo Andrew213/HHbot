@@ -4,15 +4,15 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 
 const Login = () => {
-    const { isAuth } = useTypedSelector(state => state.Login);
+    const { isAuth, loading } = useTypedSelector(state => state.Login);
 
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (isAuth) {
-            navigate('/');
+        if (!loading && isAuth) {
+            navigate(-1);
         }
-    }, [isAuth]);
+    }, [isAuth, loading]);
 
     return (
         <Grid
