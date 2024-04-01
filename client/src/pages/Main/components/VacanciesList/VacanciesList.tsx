@@ -13,8 +13,8 @@ import useWindowSize from '@/hooks/useWondowResize';
 const VacanciesList: React.FC<{
     message: string;
     resume_id: string;
-    firstBr: number;
-}> = ({ message, resume_id, firstBr }) => {
+    breakpoint_md: number;
+}> = ({ message, resume_id, breakpoint_md }) => {
     const { loading, items, pages, found } = useTypedSelector(
         state => state.Vacancies
     );
@@ -33,7 +33,7 @@ const VacanciesList: React.FC<{
 
     const getSize = index => sizeMap.current[index] + 50 || 50;
 
-    const [width] = useWindowSize();
+    const [width, height] = useWindowSize();
 
     useEffect(() => {
         if (resume_id) {
@@ -63,7 +63,7 @@ const VacanciesList: React.FC<{
         );
     };
 
-    const heightOfHeader = width >= firstBr ? 80 : 152; // высота хедера или хедер + инпут поиска
+    const heightOfHeader = width >= breakpoint_md ? 80 : 200; // высота хедера или хедер + инпут поиска
 
     if (loading) {
         return (
@@ -71,7 +71,7 @@ const VacanciesList: React.FC<{
                 display="flex"
                 alignItems="center"
                 justifyContent="center"
-                height={`calc(100vh - ${heightOfHeader}px)`}
+                height={`calc(${height} - ${heightOfHeader}px)`}
             >
                 <Spiner />
             </Box>
@@ -106,11 +106,7 @@ const VacanciesList: React.FC<{
                                 return (
                                     <li
                                         style={{
-                                            ...style,
-                                            paddingRight:
-                                                width >= firstBr
-                                                    ? '24px'
-                                                    : '40px'
+                                            ...style
                                         }}
                                     >
                                         <VacancyItem

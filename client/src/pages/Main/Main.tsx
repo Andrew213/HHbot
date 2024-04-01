@@ -12,7 +12,8 @@ import { ProvideSearchContext } from './components/Search/SearchContext';
 import Search from './components/Search/Search';
 import { api } from '@/api';
 
-const firstBr = 900;
+const breakpoint_md = 900;
+const breakpoint_sm = 500;
 
 const Main = () => {
     const [message, setMessage] = useState<string>('');
@@ -106,6 +107,8 @@ const Main = () => {
         <ProvideSearchContext>
             <Header
                 count={counter}
+                breakpoint_sm={breakpoint_sm}
+                breakpoint_md={breakpoint_md}
                 message={message}
                 setMessage={setMessage}
                 setAutoResponseStart={setAutoResponseStart}
@@ -113,20 +116,20 @@ const Main = () => {
             />
             <Grid
                 container
-                spacing={width >= firstBr ? 4 : 2}
-                paddingLeft={'40px'}
+                spacing={width >= breakpoint_md ? 4 : 2}
+                pl={width >= breakpoint_md ? 2 : 1}
+                pr={width >= breakpoint_md ? 3 : 1}
             >
                 <Grid
                     item
-                    xs={width >= firstBr ? 4 : 12}
+                    xs={width >= breakpoint_md ? 4 : 12}
                     sx={{
                         paddingLeft: '40px',
                         position: 'relative'
                     }}
-                    paddingRight={width >= firstBr ? 'inherit' : '40px'}
                 >
                     <Search />
-                    {width >= firstBr && (
+                    {width >= breakpoint_md && (
                         <>
                             <Tooltip title="Введите сопроводительное, которое будет отправляться с откликом.">
                                 <TextField
@@ -169,7 +172,7 @@ const Main = () => {
 
                 <Grid xs={12} md={8} lg={8} item>
                     <VacanciesList
-                        firstBr={firstBr}
+                        breakpoint_md={breakpoint_md}
                         resume_id={resume_id}
                         message={message}
                     />

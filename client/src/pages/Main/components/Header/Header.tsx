@@ -16,17 +16,14 @@ import useWindowSize from '@/hooks/useWondowResize';
 import MobileBar from '../MobileBar/MobileBar';
 import MobileMenu from '../MobileMenu/MobileMenu';
 
-const ToolbarStyled = styled(Toolbar)(({ theme }) => ({
-    paddingLeft: theme.spacing(5),
-    paddingRight: theme.spacing(5)
-}));
-
 interface HeaderI {
     message: string;
     setMessage: (a: string) => void;
     setAutoResponseStart: (a: (prev: boolean) => boolean) => void;
     autoResponseStart: boolean;
     count: number;
+    breakpoint_md: number;
+    breakpoint_sm: number;
 }
 
 const Header: React.FC<HeaderI> = props => {
@@ -68,10 +65,13 @@ const Header: React.FC<HeaderI> = props => {
     return (
         <AppBar
             position="static"
-            sx={{ marginBottom: 2, paddingLeft: 2, paddingRight: 2 }}
+            sx={{
+                marginBottom: 2,
+                height: width <= props.breakpoint_sm ? '50px' : 'auto'
+            }}
         >
-            <ToolbarStyled>
-                {width > 900 ? (
+            <Toolbar sx={{ padding: 1 }}>
+                {width > props.breakpoint_md ? (
                     <Box display="flex">
                         <Typography
                             variant="h6"
@@ -92,7 +92,7 @@ const Header: React.FC<HeaderI> = props => {
                     />
                 )}
 
-                {width > 900 &&
+                {width > props.breakpoint_md &&
                     user.resumeList &&
                     user.resumeList
                         .filter(el => el.id === resumeId)
@@ -110,7 +110,7 @@ const Header: React.FC<HeaderI> = props => {
                             );
                         })}
 
-                {width < 900 && <MobileBar {...props} />}
+                {width < props.breakpoint_md && <MobileBar {...props} />}
 
                 <Button
                     onClick={() => {
@@ -119,12 +119,12 @@ const Header: React.FC<HeaderI> = props => {
                     }}
                     color="inherit"
                     variant="outlined"
-                    size={width <= 900 ? 'small' : 'medium'}
+                    size={width <= props.breakpoint_md ? 'small' : 'medium'}
                     sx={{ ml: 'auto' }}
                 >
                     Выйти
                 </Button>
-            </ToolbarStyled>
+            </Toolbar>
         </AppBar>
     );
 };

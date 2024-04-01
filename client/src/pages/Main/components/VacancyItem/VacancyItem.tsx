@@ -34,10 +34,12 @@ const Item = styled(Paper)(({ theme }) => ({
     color: theme.palette.text.secondary
 }));
 
-const ButtonStyled = styled(Button)(() => ({
-    width: 150,
-    marginTop: 'auto'
-}));
+const breakpoint_sm = 500;
+
+// const ButtonStyled = styled(Button)(() => ({
+//     width: 150,
+//     marginTop: 'auto'
+// }));
 
 const ButtonStyled2 = styled(Button)(() => ({
     color: '#e01cd5',
@@ -157,7 +159,13 @@ const VacancyItem: React.FC<
                     flexDirection="column"
                     gap={4}
                 >
-                    <Box component="div" textAlign="start">
+                    <Box
+                        component="div"
+                        textAlign="start"
+                        display="flex"
+                        flexDirection="column"
+                        gap={1}
+                    >
                         <Box
                             component="div"
                             display="flex"
@@ -167,7 +175,6 @@ const VacancyItem: React.FC<
                                 fontWeight={700}
                                 maxWidth={800}
                                 variant="h5"
-                                mb={2}
                             >
                                 {name}
                             </Typography>
@@ -203,12 +210,11 @@ const VacancyItem: React.FC<
                         <Typography
                             color="white"
                             variant={salary ? 'h4' : 'subtitle1'}
-                            mb={1}
                         >
                             {showCurrency(salary)}
                         </Typography>
 
-                        <Typography mb={2}>
+                        <Typography>
                             <LocationOnIcon
                                 sx={{ marginRight: 0.5 }}
                                 fontSize="inherit"
@@ -216,7 +222,7 @@ const VacancyItem: React.FC<
                             {area.name}
                         </Typography>
 
-                        <Typography variant="caption" component="div" mb={2}>
+                        <Typography variant="caption" component="div">
                             {experience.name}
                         </Typography>
 
@@ -230,10 +236,12 @@ const VacancyItem: React.FC<
                             alignSelf="baseline"
                             textAlign="start"
                             maxWidth={800}
+                            maxHeight={width <= breakpoint_sm ? 100 : 'unset'}
+                            sx={{
+                                overflow: 'auto'
+                            }}
                         >
-                            <Typography mb={2}>
-                                {snippet.responsibility}
-                            </Typography>
+                            <Typography>{snippet.responsibility}</Typography>
 
                             <Typography>{snippet.requirement}</Typography>
                         </Box>
@@ -253,11 +261,14 @@ const VacancyItem: React.FC<
                                 href={alternate_url}
                                 variant="contained"
                                 target="_blank"
+                                size={
+                                    width <= breakpoint_sm ? 'small' : 'medium'
+                                }
                             >
                                 Требуется пройти тестовое. Открыть на HH
                             </Button>
                         ) : (
-                            <ButtonStyled
+                            <Button
                                 onClick={() => {
                                     onRespondHandler(id);
                                 }}
@@ -266,22 +277,29 @@ const VacancyItem: React.FC<
                                     (!message && response_letter_required)
                                 }
                                 variant="contained"
+                                size={
+                                    width <= breakpoint_sm ? 'small' : 'medium'
+                                }
+                                sx={{ minWidth: '127px' }}
                             >
                                 {respondLoading ? (
                                     <CircularProgress
-                                        size={24}
                                         sx={{ color: '#e01cd5' }}
                                     />
                                 ) : (
                                     'Откликнуться'
                                 )}
-                            </ButtonStyled>
+                            </Button>
                         )}
                         {width <= 1260 && !has_test && (
                             <ButtonStyled2
                                 href={alternate_url}
                                 variant="outlined"
                                 target="_blank"
+                                size={
+                                    width <= breakpoint_sm ? 'small' : 'medium'
+                                }
+                                sx={{ minWidth: '127px' }}
                             >
                                 Открыть на HH
                             </ButtonStyled2>

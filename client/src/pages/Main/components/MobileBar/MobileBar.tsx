@@ -18,19 +18,21 @@ const MobileBar: React.FC<MobileBarI> = ({
     return (
         <Box display="flex" alignItems="center">
             {width <= 500 ? (
-                <IconButton
-                    onClick={() => {
-                        setAutoResponseStart(prev => !prev);
-                    }}
-                    size="large"
-                    color={autoResponseStart ? 'error' : 'success'}
-                >
-                    {autoResponseStart ? (
-                        <StopCircleIcon fontSize="inherit" />
-                    ) : (
-                        <PlayCircleIcon fontSize="inherit" />
-                    )}
-                </IconButton>
+                <Tooltip title="Запуск/остановка автоотклика">
+                    <IconButton
+                        onClick={() => {
+                            setAutoResponseStart(prev => !prev);
+                        }}
+                        size="large"
+                        color={autoResponseStart ? 'error' : 'success'}
+                    >
+                        {autoResponseStart ? (
+                            <StopCircleIcon fontSize="inherit" />
+                        ) : (
+                            <PlayCircleIcon fontSize="inherit" />
+                        )}
+                    </IconButton>
+                </Tooltip>
             ) : (
                 <>
                     <Button
