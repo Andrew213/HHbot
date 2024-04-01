@@ -63,7 +63,11 @@ const VacanciesList: React.FC<{
         );
     };
 
-    const heightOfHeader = width >= breakpoint_md ? 80 : 200; // высота хедера или хедер + инпут поиска
+    let heightOfHeader = width >= breakpoint_md ? 80 : 160; // высота хедера или хедер + инпут поиска
+
+    if (width <= 500) {
+        heightOfHeader = 140;
+    }
 
     if (loading) {
         return (
@@ -88,7 +92,7 @@ const VacanciesList: React.FC<{
             {({ onItemsRendered }) => (
                 <AutoSizer
                     style={{
-                        height: `calc(100vh - ${heightOfHeader}px)`
+                        height: `calc(${height}px - ${heightOfHeader}px)`
                     }}
                     disableWidth
                 >

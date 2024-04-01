@@ -11,6 +11,7 @@ import { useSearchParams } from 'react-router-dom';
 import { ProvideSearchContext } from './components/Search/SearchContext';
 import Search from './components/Search/Search';
 import { api } from '@/api';
+import Footer from './components/Footer/Footer';
 
 const breakpoint_md = 900;
 const breakpoint_sm = 500;
@@ -177,6 +178,7 @@ const Main = () => {
                         message={message}
                     />
                 </Grid>
+                {/* {width <= breakpoint_md && <Footer />} */}
             </Grid>
         </ProvideSearchContext>
     );

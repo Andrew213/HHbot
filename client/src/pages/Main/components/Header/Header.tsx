@@ -113,8 +113,8 @@ const Header: React.FC<HeaderI> = props => {
                 {width < props.breakpoint_md && <MobileBar {...props} />}
 
                 <Button
-                    onClick={() => {
-                        logout();
+                    onClick={async () => {
+                        await logout();
                         navigate('/login');
                     }}
                     color="inherit"
