@@ -6,17 +6,19 @@ import useWindowSize from '@/hooks/useWondowResize';
 
 import useAction from '@/hooks/useAction';
 import { useTypedSelector } from '@/hooks/useTypedSelector';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 // import axios from 'axios';
 import { ProvideSearchContext } from './components/Search/SearchContext';
 import Search from './components/Search/Search';
 import { api } from '@/api';
-import Footer from './components/Footer/Footer';
+import { ROUTES } from '@/routes';
 
 const breakpoint_md = 900;
 const breakpoint_sm = 500;
 
 const Main = () => {
+    const navigate = useNavigate();
+
     const [message, setMessage] = useState<string>('');
 
     const [autoResponseStart, setAutoResponseStart] = useState<boolean>(false);
@@ -28,8 +30,15 @@ const Main = () => {
     const [searchParams] = useSearchParams();
 
     const { items, responseIds } = useTypedSelector(state => state.Vacancies);
+    const { isAuth } = useTypedSelector(state => state.Login);
 
     const [counter, setCounter] = useState(0);
+
+    useEffect(() => {
+        if (isAuth && !searchParams.has('resume')) {
+            navigate(ROUTES.SELECT_RESUME.INDEX);
+        }
+    }, [isAuth, searchParams]);
 
     useEffect(() => {
         if (searchParams.has('resume')) {
@@ -178,7 +187,6 @@ const Main = () => {
                         message={message}
                     />
                 </Grid>
-                {/* {width <= breakpoint_md && <Footer />} */}
             </Grid>
         </ProvideSearchContext>
     );
