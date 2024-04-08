@@ -2,6 +2,7 @@ import { Button, Grid } from '@mui/material';
 import { useTypedSelector } from '@/hooks/useTypedSelector';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
+import { ROUTES } from '@/routes';
 
 const Login = () => {
     const { isAuth, loading } = useTypedSelector(state => state.Login);
@@ -10,7 +11,7 @@ const Login = () => {
 
     useEffect(() => {
         if (!loading && isAuth) {
-            navigate(-1);
+            navigate(ROUTES.SELECT_RESUME.INDEX);
         }
     }, [isAuth, loading]);
 
