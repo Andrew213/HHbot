@@ -10,10 +10,6 @@ import Core from './pages/core';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { initStore } from './store';
-import axios from 'axios';
-
-// @ts-ignore
-// const store = initStore();
 
 const darkTheme = createTheme({
     palette: {

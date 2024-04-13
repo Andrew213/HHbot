@@ -30,16 +30,10 @@ const Item = styled(Paper)(({ theme }) => ({
     borderWidth: 1,
     borderImageSource: 'linear-gradient(to left, #e01cd5, #1CB5E0)',
     textAlign: 'center',
-    // height: 560,
     color: theme.palette.text.secondary
 }));
 
 const breakpoint_sm = 500;
-
-// const ButtonStyled = styled(Button)(() => ({
-//     width: 150,
-//     marginTop: 'auto'
-// }));
 
 const ButtonStyled2 = styled(Button)(() => ({
     color: '#e01cd5',

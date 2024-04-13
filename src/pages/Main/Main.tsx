@@ -7,7 +7,6 @@ import useWindowSize from '@/hooks/useWondowResize';
 import useAction from '@/hooks/useAction';
 import { useTypedSelector } from '@/hooks/useTypedSelector';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-// import axios from 'axios';
 import { ProvideSearchContext } from './components/Search/SearchContext';
 import Search from './components/Search/Search';
 import { api } from '@/api';
