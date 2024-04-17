@@ -1,4 +1,12 @@
-import { Button, Grid, TextField, Tooltip, Typography } from '@mui/material';
+import {
+    Alert,
+    Button,
+    Grid,
+    Snackbar,
+    TextField,
+    Tooltip,
+    Typography
+} from '@mui/material';
 import Header from './components/Header/Header';
 import VacanciesList from './components/VacanciesList/VacanciesList';
 import { useCallback, useEffect, useState } from 'react';
@@ -28,6 +36,8 @@ const Main = () => {
 
     const [searchParams] = useSearchParams();
 
+    const [errMsg, setErrMsg] = useState<string>('');
+
     const { items, responseIds } = useTypedSelector(state => state.Vacancies);
     const { isAuth } = useTypedSelector(state => state.Login);
 
@@ -46,7 +56,7 @@ const Main = () => {
     }, [searchParams]);
 
     const sendAutoResponse = useCallback(
-        async (vacancy_id, has_test) => {
+        async (vacancy_id, has_test, response_letter_required) => {
             const el = document.querySelector(`[itemid="${vacancy_id}"]`);
             if (el) {
                 const data: {
@@ -62,19 +72,30 @@ const Main = () => {
                 }
 
                 // скроллить необходимо в любом случае, даже если отклик не будет отправлен т.к требуется тестове
-                // для того чтобы в DOM дерево подгрузились отальныевакансии
-                el.scrollIntoView();
+                // для того чтобы в DOM дерево подгрузились остальные вакансии
+                else el.scrollIntoView();
+                // не отправлять автоотклик без письма если требуется в вакансии
+                if (
+                    !has_test &&
+                    ((response_letter_required && message) ||
+                        (!response_letter_required && !message))
+                ) {
+                    try {
+                        const response = await api.post(
+                            `${
+                                import.meta.env.VITE_CLIENT_HOST
+                            }/api/vacancies/negotiations`,
+                            data
+                        );
 
-                if (!has_test) {
-                    const response = await api.post(
-                        `${
-                            import.meta.env.VITE_CLIENT_HOST
-                        }/api/vacancies/negotiations`,
-                        data
-                    );
-                    if (response.status === 201) {
-                        addToResponseArray(vacancy_id);
-                        setCounter(prev => prev + 1);
+                        if (response.status === 201) {
+                            addToResponseArray(vacancy_id);
+                            setCounter(prev => prev + 1);
+                        }
+                    } catch (err) {
+                        const errData = err.response.data;
+                        setErrMsg(errData.description);
+                        setAutoResponseStart(false);
                     }
                 }
             }
@@ -83,21 +104,25 @@ const Main = () => {
     );
 
     useEffect(() => {
-        let timeoutIds: ReturnType<typeof setTimeout>[] = [];
+        let timeoutId;
         const startAutoResponse = async () => {
             const notRespondedVacancies = items?.filter(
-                ({ id, has_test }) => !responseIds.has(id)
+                ({ id }) => !responseIds.has(id)
             );
 
             for (let i = 0; i < notRespondedVacancies.length; i++) {
                 const vacancy = notRespondedVacancies[i];
                 await new Promise<void>(resolve => {
-                    const id = setTimeout(() => {
+                    const timeId = setTimeout(() => {
                         resolve();
                     }, 2000);
-                    timeoutIds.push(id);
+                    timeoutId = timeId;
                 }).then(() => {
-                    sendAutoResponse(vacancy.id, vacancy.has_test);
+                    sendAutoResponse(
+                        vacancy.id,
+                        vacancy.has_test,
+                        vacancy.response_letter_required
+                    );
                 });
             }
         };
@@ -106,7 +131,7 @@ const Main = () => {
         }
 
         return () => {
-            timeoutIds.forEach(id => clearTimeout(id));
+            clearTimeout(timeoutId);
         };
     }, [items, autoResponseStart]);
 
@@ -114,6 +139,15 @@ const Main = () => {
 
     return (
         <ProvideSearchContext>
+            <Snackbar
+                open={!!errMsg}
+                autoHideDuration={2000}
+                onClose={() => setErrMsg('')}
+            >
+                <Alert variant="filled" severity="error">
+                    {errMsg}
+                </Alert>
+            </Snackbar>
             <Header
                 count={counter}
                 breakpoint_sm={breakpoint_sm}
@@ -184,6 +218,7 @@ const Main = () => {
                         breakpoint_md={breakpoint_md}
                         resume_id={resume_id}
                         message={message}
+                        setErrMsg={setErrMsg}
                     />
                 </Grid>
             </Grid>

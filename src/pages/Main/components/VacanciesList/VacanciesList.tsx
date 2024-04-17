@@ -14,7 +14,8 @@ const VacanciesList: React.FC<{
     message: string;
     resume_id: string;
     breakpoint_md: number;
-}> = ({ message, resume_id, breakpoint_md }) => {
+    setErrMsg: (a: string) => void;
+}> = ({ message, resume_id, breakpoint_md, setErrMsg }) => {
     const { loading, items, pages, found } = useTypedSelector(
         state => state.Vacancies
     );
@@ -118,6 +119,7 @@ const VacanciesList: React.FC<{
                                             message={message}
                                             setSize={setSize}
                                             index={index}
+                                            setErrMsg={setErrMsg}
                                             {...items[index]}
                                         />
                                     </li>

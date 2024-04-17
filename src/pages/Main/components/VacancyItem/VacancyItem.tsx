@@ -5,7 +5,6 @@ import {
     Grid,
     Link,
     Paper,
-    CircularProgress,
     Typography,
     styled,
     Alert,
@@ -20,6 +19,7 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { vacancy } from '@/store/Vacancies/VacanciesStore';
 import { memo, useEffect, useRef, useState } from 'react';
 import { api } from '@/api';
+import { LoadingButton } from '@mui/lab';
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -79,6 +79,7 @@ const VacancyItem: React.FC<
         resume_id: string;
         setSize: (a: number, b: any) => void;
         index: number;
+        setErrMsg: (a: string) => void;
     }
 > = ({
     name,
@@ -94,6 +95,7 @@ const VacancyItem: React.FC<
     setSize,
     index,
     has_test,
+    setErrMsg,
     response_letter_required
 }) => {
     const {
@@ -122,18 +124,21 @@ const VacancyItem: React.FC<
             if (message) {
                 data.message = message;
             }
+            try {
+                const response = await api.post(
+                    `${
+                        import.meta.env.VITE_CLIENT_HOST
+                    }/api/vacancies/negotiations`,
+                    data
+                );
 
-            const response = await api.post(
-                `${
-                    import.meta.env.VITE_CLIENT_HOST
-                }/api/vacancies/negotiations`,
-                data
-            );
-
-            if (response.status === 201) {
-                addToResponseArray(id);
+                if (response.status === 201) {
+                    addToResponseArray(id);
+                }
+            } catch (err) {
+                const errData = err.response.data;
+                setErrMsg(errData.description);
             }
-
             setRespondLoading(false);
         }
     };
@@ -262,28 +267,23 @@ const VacancyItem: React.FC<
                                 Требуется пройти тестовое. Открыть на HH
                             </Button>
                         ) : (
-                            <Button
-                                onClick={() => {
-                                    onRespondHandler(id);
-                                }}
+                            <LoadingButton
+                                variant="contained"
+                                loading={respondLoading}
                                 disabled={
                                     responseIds.has(id) ||
                                     (!message && response_letter_required)
                                 }
-                                variant="contained"
+                                onClick={() => {
+                                    onRespondHandler(id);
+                                }}
                                 size={
                                     width <= breakpoint_sm ? 'small' : 'medium'
                                 }
                                 sx={{ minWidth: '127px' }}
                             >
-                                {respondLoading ? (
-                                    <CircularProgress
-                                        sx={{ color: '#e01cd5' }}
-                                    />
-                                ) : (
-                                    'Откликнуться'
-                                )}
-                            </Button>
+                                Откликнуться
+                            </LoadingButton>
                         )}
                         {width <= 1260 && !has_test && (
                             <ButtonStyled2
