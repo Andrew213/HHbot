@@ -240,9 +240,17 @@ const VacancyItem: React.FC<
                                 overflow: 'auto'
                             }}
                         >
-                            <Typography>{snippet.responsibility}</Typography>
+                            <Typography
+                                dangerouslySetInnerHTML={{
+                                    __html: snippet.responsibility as string
+                                }}
+                            />
 
-                            <Typography>{snippet.requirement}</Typography>
+                            <Typography
+                                dangerouslySetInnerHTML={{
+                                    __html: snippet.requirement as string
+                                }}
+                            />
                         </Box>
                     )}
 
