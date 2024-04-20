@@ -3,8 +3,10 @@ import AppBar from '@mui/material/AppBar';
 import {
     Box,
     Button,
+    IconButton,
     LinearProgress,
     Toolbar,
+    Tooltip,
     Typography,
     styled
 } from '@mui/material';
@@ -15,6 +17,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import useWindowSize from '@/hooks/useWondowResize';
 import MobileBar from '../MobileBar/MobileBar';
 import MobileMenu from '../MobileMenu/MobileMenu';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import ScheduleModal from '../ScheduleModal/ScheduleModal';
 
 interface HeaderI {
     message: string;
@@ -40,6 +44,8 @@ const Header: React.FC<HeaderI> = props => {
     const [searchParams] = useSearchParams();
 
     const [resumeId, setResumeId] = useState('');
+
+    const [scheduleOpen, setScheduleOpen] = useState<boolean>(false);
 
     useEffect(() => {
         if (searchParams.has('resume')) {
@@ -91,24 +97,43 @@ const Header: React.FC<HeaderI> = props => {
                         resume_id={resumeId}
                     />
                 )}
-
-                {width > props.breakpoint_md &&
-                    user.resumeList &&
-                    user.resumeList
-                        .filter(el => el.id === resumeId)
-                        .map(el => {
-                            return (
-                                <Button
-                                    variant="outlined"
-                                    key={el.id}
-                                    href={el.alternate_url}
-                                    target="_blank"
-                                    size="small"
-                                >
-                                    {el.title}
-                                </Button>
-                            );
-                        })}
+                <div>
+                    {width > props.breakpoint_md &&
+                        user.resumeList &&
+                        user.resumeList
+                            .filter(el => el.id === resumeId)
+                            .map(el => {
+                                return (
+                                    <Button
+                                        variant="outlined"
+                                        key={el.id}
+                                        href={el.alternate_url}
+                                        target="_blank"
+                                        size="small"
+                                    >
+                                        {el.title}
+                                    </Button>
+                                );
+                            })}
+                    <Tooltip title="Запланировать автоотклики">
+                        <IconButton
+                            size="large"
+                            onClick={() => {
+                                setScheduleOpen(true);
+                            }}
+                            sx={{ marginLeft: 2 }}
+                        >
+                            <CalendarMonthIcon
+                                fontSize="inherit"
+                                color="primary"
+                            />
+                        </IconButton>
+                    </Tooltip>
+                    <ScheduleModal
+                        onClose={() => setScheduleOpen(false)}
+                        open={scheduleOpen}
+                    />
+                </div>
 
                 {width < props.breakpoint_md && <MobileBar {...props} />}
 

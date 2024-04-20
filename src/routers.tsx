@@ -6,8 +6,9 @@ import { useTypedSelector } from './hooks/useTypedSelector';
 import { useEffect, useState } from 'react';
 import Login from './pages/Login/Login';
 import useAction from './hooks/useAction';
-import { Box, LinearProgress } from '@mui/material';
+import { Box, Button, LinearProgress } from '@mui/material';
 import SelectResume from './pages/Main/components/SelectResume/SelectResume';
+import axios from 'axios';
 
 const AppRouter = () => {
     const navigate = useNavigate();
@@ -53,8 +54,12 @@ const AppRouter = () => {
             </Box>
         );
     }
-
+    const handleTest = async () => {
+        const response = await axios('https://158.160.164.245:5000/api/test');
+        console.log(`response `, response);
+    };
     return (
+        // <Button onClick={handleTest}>test</Button>
         <Routes>
             {isAuth && (
                 <Route path={ROUTES.INDEX_REDIRECT.INDEX} element={<Main />} />
