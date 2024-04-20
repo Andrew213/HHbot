@@ -67,7 +67,7 @@ const VacanciesList: React.FC<{
     let heightOfHeader = width >= breakpoint_md ? 80 : 160; // высота хедера или хедер + инпут поиска
 
     if (width <= 500) {
-        heightOfHeader = 140;
+        heightOfHeader = 165;
     }
 
     if (loading) {

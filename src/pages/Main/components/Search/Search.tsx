@@ -38,7 +38,7 @@ const Search: React.FC = () => {
 
     return (
         <>
-            <Box sx={{ position: 'relative' }}>
+            <Box position="relative">
                 <TextField
                     fullWidth
                     placeholder="Поиск"
@@ -93,7 +93,7 @@ const Search: React.FC = () => {
                     <SearchIcon />
                 </IconButton>
             </Box>
-            {searchValue && found && wasFound && (
+            {found && (
                 <Typography mt={1}>{`Найдено ${found} вакансий`}</Typography>
             )}
         </>
