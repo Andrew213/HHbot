@@ -15,6 +15,13 @@ export function ProvideSearchContext({ children }) {
     );
 }
 
-export const useSearch = () => {
+type SearchContextType = {
+    searchValue: string;
+    setSearchValue: (value: string) => void;
+    currentPage: number;
+    setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+};
+
+export const useSearch = (): SearchContextType => {
     return useContext(SearchContext);
 };

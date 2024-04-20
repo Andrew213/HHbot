@@ -73,12 +73,13 @@ const Main = () => {
 
                 // скроллить необходимо в любом случае, даже если отклик не будет отправлен т.к требуется тестове
                 // для того чтобы в DOM дерево подгрузились остальные вакансии
-                else el.scrollIntoView();
+                el.scrollIntoView();
+
                 // не отправлять автоотклик без письма если требуется в вакансии
                 if (
                     !has_test &&
                     ((response_letter_required && message) ||
-                        (!response_letter_required && !message))
+                        !response_letter_required)
                 ) {
                     try {
                         const response = await api.post(
@@ -109,7 +110,6 @@ const Main = () => {
             const notRespondedVacancies = items?.filter(
                 ({ id }) => !responseIds.has(id)
             );
-
             for (let i = 0; i < notRespondedVacancies.length; i++) {
                 const vacancy = notRespondedVacancies[i];
                 await new Promise<void>(resolve => {
@@ -135,7 +135,7 @@ const Main = () => {
         };
     }, [items, autoResponseStart]);
 
-    const [width] = useWindowSize();
+    const [width, height] = useWindowSize();
 
     return (
         <ProvideSearchContext>
