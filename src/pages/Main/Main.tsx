@@ -19,6 +19,8 @@ import { ProvideSearchContext } from './components/Search/SearchContext';
 import Search from './components/Search/Search';
 import { api } from '@/api';
 import { ROUTES } from '@/routes';
+import axios from 'axios';
+import DateTimePicker from '@/components/DateTimePicker/DateTimePicker';
 
 const breakpoint_md = 900;
 const breakpoint_sm = 500;
@@ -39,6 +41,7 @@ const Main = () => {
     const [errMsg, setErrMsg] = useState<string>('');
 
     const { items, responseIds } = useTypedSelector(state => state.Vacancies);
+
     const { isAuth } = useTypedSelector(state => state.Login);
 
     const [counter, setCounter] = useState(0);
@@ -136,6 +139,19 @@ const Main = () => {
     }, [items, autoResponseStart]);
 
     const [width, height] = useWindowSize();
+
+    const {
+        user: { id }
+    } = useTypedSelector(state => state.User);
+    const handleAdd = async () => {
+        const response = await axios.post(
+            'http://localhost:5000/api/schedule',
+            {
+                userId: id
+            }
+        );
+        console.log(`response `, response);
+    };
 
     return (
         <ProvideSearchContext>
