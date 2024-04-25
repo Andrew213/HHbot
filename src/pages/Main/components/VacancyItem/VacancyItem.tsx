@@ -35,9 +35,8 @@ const Item = styled(Paper)(({ theme }) => ({
 
 const breakpoint_sm = 500;
 
-const ButtonStyled2 = styled(Button)(() => ({
+export const ButtonStyled2 = styled(Button)(() => ({
     color: '#e01cd5',
-    height: 36,
     borderColor: '#e01cd5',
     '&:hover': {
         borderColor: '#eb14df',
