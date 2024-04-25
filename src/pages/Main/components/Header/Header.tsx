@@ -7,8 +7,7 @@ import {
     LinearProgress,
     Toolbar,
     Tooltip,
-    Typography,
-    styled
+    Typography
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTypedSelector } from '@/hooks/useTypedSelector';
@@ -130,7 +129,10 @@ const Header: React.FC<HeaderI> = props => {
                         </IconButton>
                     </Tooltip>
                     <ScheduleModal
-                        onClose={() => setScheduleOpen(false)}
+                        onClose={(event, reason) => {
+                            if (reason && reason === 'backdropClick') return;
+                            setScheduleOpen(false);
+                        }}
                         open={scheduleOpen}
                     />
                 </div>
