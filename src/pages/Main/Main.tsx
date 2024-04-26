@@ -86,9 +86,7 @@ const Main = () => {
                 ) {
                     try {
                         const response = await api.post(
-                            `${
-                                import.meta.env.VITE_CLIENT_HOST
-                            }/api/vacancies/negotiations`,
+                            `/api/vacancies/negotiations`,
                             data
                         );
 

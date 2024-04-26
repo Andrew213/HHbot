@@ -12,9 +12,7 @@ export const checkAuth = () => {
                 type: LoginActionType.REQUEST_TOKEN,
                 loading: true
             });
-            const response = await api.get(
-                `${import.meta.env.VITE_CLIENT_HOST}/api/session/check`
-            );
+            const response = await api.get(`/api/session/check`);
 
             dispatch({
                 type: LoginActionType.CHECK_AUTH,
@@ -34,10 +32,9 @@ export const getTokens = (authCode: string) => {
     return async (dispatch: ThunkDispatch<LoginStateT, void, LoginActionI>) => {
         try {
             dispatch(requestToken());
-            const response = await api.post(
-                `${import.meta.env.VITE_CLIENT_HOST}/api/session/token`,
-                { code: authCode }
-            );
+            const response = await api.post(`/api/session/token`, {
+                code: authCode
+            });
 
             if (response.status === 200) {
                 dispatch(receiveToken());
@@ -52,9 +49,7 @@ export const getTokens = (authCode: string) => {
 export const logout = () => {
     return async (dispatch: ThunkDispatch<LoginStateT, void, LoginActionI>) => {
         try {
-            const response = await api.delete(
-                `${import.meta.env.VITE_CLIENT_HOST}/api/session/logout`
-            );
+            const response = await api.delete(`/api/session/logout`);
 
             if (response.status === 204) {
                 dispatch(logoutToken());

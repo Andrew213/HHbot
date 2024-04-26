@@ -25,6 +25,9 @@ const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
     ...theme.typography.body2,
     padding: theme.spacing(5),
+    [theme.breakpoints.down('sm')]: {
+        padding: theme.spacing(2)
+    },
     border: '10px solid',
     borderImageSlice: 1,
     borderWidth: 1,
@@ -33,7 +36,7 @@ const Item = styled(Paper)(({ theme }) => ({
     color: theme.palette.text.secondary
 }));
 
-const breakpoint_sm = 500;
+const breakpoint_sm = 600;
 
 export const ButtonStyled2 = styled(Button)(() => ({
     color: '#e01cd5',
@@ -125,9 +128,7 @@ const VacancyItem: React.FC<
             }
             try {
                 const response = await api.post(
-                    `${
-                        import.meta.env.VITE_CLIENT_HOST
-                    }/api/vacancies/negotiations`,
+                    `/api/vacancies/negotiations`,
                     data
                 );
 

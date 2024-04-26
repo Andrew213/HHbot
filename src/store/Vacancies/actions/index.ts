@@ -27,9 +27,7 @@ export const searchAllVacancies = (text: string, page: number) => {
             });
 
             const response = await api.get(
-                `${
-                    import.meta.env.VITE_CLIENT_HOST
-                }/api/vacancies/search?text=${text}&page=${page}`
+                `/api/vacancies/search?text=${text}&page=${page}`
             );
 
             if (response.status === 200) {
@@ -64,9 +62,7 @@ export const getSimilarVacancies = (resume_id: string, page: number) => {
             });
 
             const response = await api.get(
-                `${
-                    import.meta.env.VITE_CLIENT_HOST
-                }/api/vacancies?resume_id=${resume_id}&page=${page}`
+                `/api/vacancies?resume_id=${resume_id}&page=${page}`
             );
 
             if (response.status === 200) {

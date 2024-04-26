@@ -9,9 +9,7 @@ export const getUser = () => {
     return async (dispatch: ThunkDispatch<userStateT, void, UserActionI>) => {
         try {
             dispatch(requestUser());
-            const response = await api.get(
-                `${import.meta.env.VITE_CLIENT_HOST}/api/user/me`
-            );
+            const response = await api.get(`/api/user/me`);
             if (response.status === 200) {
                 dispatch(receiveUser(response.data));
             }
@@ -29,9 +27,7 @@ export const getResume = () => {
             dispatch({
                 type: UserActionType.REQUEST_RESUME
             });
-            const response = await api.get(
-                `${import.meta.env.VITE_CLIENT_HOST}/api/user/resume`
-            );
+            const response = await api.get(`/api/user/resume`);
 
             if (response.status === 200) {
                 dispatch({
