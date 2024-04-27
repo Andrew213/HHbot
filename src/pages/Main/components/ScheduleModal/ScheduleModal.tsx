@@ -72,7 +72,7 @@ const ScheduleModal: React.FC<
             }
         };
         getScheduledResponse();
-    }, []);
+    }, [resume_id]);
 
     const { user } = useTypedSelector(state => state.User);
 
