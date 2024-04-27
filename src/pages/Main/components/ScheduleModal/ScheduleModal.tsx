@@ -62,8 +62,7 @@ const ScheduleModal: React.FC<
 
     useEffect(() => {
         const getScheduledResponse = async () => {
-            const { data } = await api.get(`/api/schedule?userId=${user.id}`);
-            console.log(data);
+            const { data } = await api.get(`/api/schedule/${resume_id}`);
             if (data.data) {
                 const { count, hours, minutes, message } = data.data;
                 setTime(dayjs().set('hour', hours).set('minute', minutes));
@@ -100,8 +99,7 @@ const ScheduleModal: React.FC<
             message,
             search,
             resume_id,
-            email: user.email,
-            userId: user.id
+            email: user.email
         });
 
         if (response.status === 200) {
@@ -112,7 +110,7 @@ const ScheduleModal: React.FC<
 
     const handleOnCancel = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const response = await api.delete(`/api/schedule/${user.id}`);
+        const response = await api.delete(`/api/schedule/${resume_id}`);
         if (response.status === 200) {
             setDisabled(false);
             setNotificationOpen(true);
