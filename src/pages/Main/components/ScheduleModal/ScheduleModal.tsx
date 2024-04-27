@@ -1,10 +1,12 @@
 import {
+    Alert,
     Dialog,
     DialogActions,
     DialogContent,
     DialogProps,
     DialogTitle,
     IconButton,
+    Snackbar,
     TextField,
     Tooltip,
     Typography
@@ -14,15 +16,20 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import CloseIcon from '@mui/icons-material/Close';
 import { useEffect, useState } from 'react';
 import { LoadingButton } from '@mui/lab';
-import { ButtonStyled2 } from '../VacancyItem/VacancyItem';
 import HelpOutlineSharpIcon from '@mui/icons-material/HelpOutlineSharp';
 
 import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
+import { api } from '@/api';
+import { useTypedSelector } from '@/hooks/useTypedSelector';
+import { useSearchParams } from 'react-router-dom';
 
-const ScheduleModal: React.FC<Omit<DialogProps, 'children'>> = props => {
+const ScheduleModal: React.FC<
+    Omit<DialogProps, 'children'> & {
+        setAreResponsesScheduled: (a: boolean) => void;
+    }
+> = props => {
     const [open, setIsOpen] = useState(false);
-
     const [time, setTime] = useState<dayjs.Dayjs | null>(dayjs());
 
     const [count, setCount] = useState<string>('1');
@@ -30,6 +37,45 @@ const ScheduleModal: React.FC<Omit<DialogProps, 'children'>> = props => {
     const [message, setMessage] = useState<string>('');
 
     const [search, setSearch] = useState<string>();
+
+    const [resume_id, setResumeId] = useState<string>('');
+
+    const [disabled, setDisabled] = useState<boolean>(false);
+
+    const [notificationOpen, setNotificationOpen] = useState<boolean>(false);
+
+    const [searchParams] = useSearchParams();
+
+    useEffect(() => {
+        if (searchParams.has('resume')) {
+            setResumeId(searchParams.get('resume') as string);
+        }
+    }, [searchParams]);
+
+    useEffect(() => {
+        setIsOpen(props.open);
+    }, [props.open]);
+
+    useEffect(() => {
+        props.setAreResponsesScheduled(disabled);
+    }, [disabled]);
+
+    useEffect(() => {
+        const getScheduledResponse = async () => {
+            const { data } = await api.get(`/api/schedule?userId=${user.id}`);
+            console.log(data);
+            if (data.data) {
+                const { count, hours, minutes, message } = data.data;
+                setTime(dayjs().set('hour', hours).set('minute', minutes));
+                setCount(count);
+                setMessage(message);
+                setDisabled(true);
+            }
+        };
+        getScheduledResponse();
+    }, []);
+
+    const { user } = useTypedSelector(state => state.User);
 
     const onChageCount = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -44,154 +90,181 @@ const ScheduleModal: React.FC<Omit<DialogProps, 'children'>> = props => {
         }
     };
 
-    useEffect(() => {
-        setIsOpen(props.open);
-    }, [props.open]);
-
-    const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const data = {
-            time: dayjs(time).format('HH:mm'),
+
+        const response = await api.post(`/api/schedule`, {
+            hours: dayjs(time).format('HH'),
+            minutes: dayjs(time).format('mm'),
             count,
             message,
-            search
-        };
+            search,
+            resume_id,
+            email: user.email,
+            userId: user.id
+        });
 
-        console.log(`data `, data);
+        if (response.status === 200) {
+            setDisabled(true);
+            setNotificationOpen(true);
+        }
+    };
+
+    const handleOnCancel = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const response = await api.delete(`/api/schedule/${user.id}`);
+        if (response.status === 200) {
+            setDisabled(false);
+            setNotificationOpen(true);
+        }
     };
 
     return (
-        <Dialog
-            PaperProps={{
-                component: 'form',
-                onSubmit: handleOnSubmit
-            }}
-            scroll="body"
-            sx={{
-                //You can copy the code below in your themes
-                // '& .MuiPaper-root': {
-                //     background: '#000'
-                // },
-                '& .MuiBackdrop-root': {
-                    backgroundColor: 'rgba(0, 0, 0, 0.7)'
-                }
-            }}
-            {...props}
-            open={open}
-        >
-            <DialogTitle
-                sx={{
-                    display: 'flex',
-                    alignItems: 'center'
-                }}
+        <>
+            <Snackbar
+                open={notificationOpen}
+                autoHideDuration={2000}
+                onClose={() => setNotificationOpen(false)}
             >
-                <div>Запланировать автоотклики</div>
-
-                <IconButton
+                <Alert
+                    variant="filled"
+                    sx={{ color: '#fff' }}
+                    severity="success"
+                >
+                    {!disabled ? 'Рассылка прекращена' : 'Рассылка запущена'}
+                </Alert>
+            </Snackbar>
+            <Dialog
+                PaperProps={{
+                    component: 'form',
+                    onSubmit: disabled ? handleOnCancel : handleOnSubmit
+                }}
+                scroll="body"
+                sx={{
+                    '& .MuiBackdrop-root': {
+                        backgroundColor: 'rgba(0, 0, 0, 0.7)'
+                    }
+                }}
+                {...props}
+                open={open}
+            >
+                <DialogTitle
                     sx={{
-                        marginLeft: 'auto',
-                        right: 0
+                        display: 'flex',
+                        alignItems: 'center'
                     }}
-                    onClick={e => {
-                        setIsOpen(false);
-                        if (props.onClose) {
-                            props.onClose(e, 'escapeKeyDown');
-                        }
-                    }}
-                    size="large"
                 >
-                    <CloseIcon color="error" fontSize="inherit" />
-                </IconButton>
-            </DialogTitle>
+                    <div>Запланировать автоотклики</div>
 
-            <DialogContent dividers>
-                <Typography>
-                    Автоматизируйте отправку откликов на вакансии, выбрав время,
-                    количество откликов и добавив сопроводительное письмо.
-                    Функция автооткликов отправит ваши заявки ежедневно в
-                    выбранное вами время.
-                </Typography>
-            </DialogContent>
-
-            <DialogContent sx={{ display: 'flex', flexDirection: 'column' }}>
-                <LocalizationProvider
-                    dateAdapter={AdapterDayjs}
-                    adapterLocale="ru"
-                >
-                    <TimePicker
-                        label="Время отправки откликов"
-                        value={time}
-                        onChange={setTime}
-                        slotProps={{
-                            textField: {
-                                required: true,
-                                margin: 'normal',
-                                fullWidth: true
+                    <IconButton
+                        sx={{
+                            marginLeft: 'auto',
+                            right: 0
+                        }}
+                        onClick={e => {
+                            setIsOpen(false);
+                            if (props.onClose) {
+                                props.onClose(e, 'escapeKeyDown');
                             }
                         }}
-                    />
-                </LocalizationProvider>
-                <TextField
-                    type="number"
-                    onChange={onChageCount}
-                    autoFocus
-                    fullWidth
-                    required
-                    value={count}
-                    margin="normal"
-                    label="Количество откликов (1-50)"
-                />
+                        size="large"
+                    >
+                        <CloseIcon color="error" fontSize="inherit" />
+                    </IconButton>
+                </DialogTitle>
 
-                <TextField
-                    autoFocus
-                    fullWidth
-                    multiline
-                    value={message}
-                    onChange={e => setMessage(e.target.value)}
-                    margin="normal"
-                    label="Сопроводительное"
-                />
-                <TextField
-                    autoFocus
-                    fullWidth
-                    margin="normal"
-                    value={search}
-                    onChange={e => setSearch(e.target.value)}
-                    label="Ключевые слова"
-                    InputProps={{
-                        endAdornment: (
-                            <Tooltip
-                                title="
+                <DialogContent dividers>
+                    <Typography>
+                        Автоматизируйте отправку откликов на вакансии, выбрав
+                        время, количество откликов и добавив сопроводительное
+                        письмо. Функция автооткликов отправит ваши заявки
+                        ежедневно в выбранное вами время.
+                    </Typography>
+                </DialogContent>
+                {disabled && <Alert severity="success">Рассылка активна</Alert>}
+                <DialogContent
+                    sx={{ display: 'flex', flexDirection: 'column' }}
+                >
+                    <LocalizationProvider
+                        dateAdapter={AdapterDayjs}
+                        adapterLocale="ru"
+                    >
+                        <TimePicker
+                            disabled={disabled}
+                            label="Время отправки откликов"
+                            value={time}
+                            onChange={setTime}
+                            slotProps={{
+                                textField: {
+                                    required: true,
+                                    margin: 'normal',
+                                    fullWidth: true
+                                }
+                            }}
+                        />
+                    </LocalizationProvider>
+                    <TextField
+                        type="number"
+                        disabled={disabled}
+                        onChange={onChageCount}
+                        autoFocus
+                        fullWidth
+                        required
+                        value={count}
+                        margin="normal"
+                        label="Количество откликов (1-50)"
+                    />
+
+                    <TextField
+                        autoFocus
+                        fullWidth
+                        disabled={disabled}
+                        multiline
+                        value={message}
+                        onChange={e => setMessage(e.target.value)}
+                        margin="normal"
+                        label="Сопроводительное"
+                    />
+                    <TextField
+                        autoFocus
+                        fullWidth
+                        disabled={disabled}
+                        margin="normal"
+                        value={search}
+                        onChange={e => setSearch(e.target.value)}
+                        label="Ключевые слова"
+                        InputProps={{
+                            endAdornment: (
+                                <Tooltip
+                                    title="
 Без этой строки отклики будут отправляться на наиболее подходящие вакансии к резюме. Как на главной странице.
 В это поле можно вставить поисковый запрос и тогда запланированные отклики будут отправлять на найденные по этой строке вакансии.
 "
-                            >
-                                <IconButton>
-                                    <HelpOutlineSharpIcon />
-                                </IconButton>
-                            </Tooltip>
-                        )
-                    }}
-                />
-                <DialogActions>
-                    <LoadingButton
-                        type="submit"
-                        size="small"
-                        variant="contained"
-                        autoFocus
-                    >
-                        Запланировать
-                    </LoadingButton>
-                    <ButtonStyled2
-                        variant="outlined"
-                        size="small"
-                        type="submit"
-                    >
-                        Отменить
-                    </ButtonStyled2>
-                </DialogActions>
-            </DialogContent>
-        </Dialog>
+                                >
+                                    <IconButton>
+                                        <HelpOutlineSharpIcon />
+                                    </IconButton>
+                                </Tooltip>
+                            )
+                        }}
+                    />
+                    <DialogActions>
+                        <LoadingButton
+                            type="submit"
+                            size="small"
+                            variant="contained"
+                            autoFocus
+                            sx={{
+                                color: '#fff'
+                            }}
+                            color={disabled ? 'error' : 'success'}
+                        >
+                            {disabled ? 'Закончить рассылку' : 'Запланировать'}
+                        </LoadingButton>
+                    </DialogActions>
+                </DialogContent>
+            </Dialog>
+        </>
     );
 };
 

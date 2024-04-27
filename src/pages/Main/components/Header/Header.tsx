@@ -46,6 +46,9 @@ const Header: React.FC<HeaderI> = props => {
 
     const [scheduleOpen, setScheduleOpen] = useState<boolean>(false);
 
+    const [areResponsesScheduled, setAreResponsesScheduled] =
+        useState<boolean>(false);
+
     useEffect(() => {
         if (searchParams.has('resume')) {
             setResumeId(searchParams.get('resume') as string);
@@ -124,11 +127,16 @@ const Header: React.FC<HeaderI> = props => {
                         >
                             <CalendarMonthIcon
                                 fontSize="inherit"
-                                color="primary"
+                                color={
+                                    areResponsesScheduled
+                                        ? 'success'
+                                        : 'primary'
+                                }
                             />
                         </IconButton>
                     </Tooltip>
                     <ScheduleModal
+                        setAreResponsesScheduled={setAreResponsesScheduled}
                         onClose={(event, reason) => {
                             if (reason && reason === 'backdropClick') return;
                             setScheduleOpen(false);
