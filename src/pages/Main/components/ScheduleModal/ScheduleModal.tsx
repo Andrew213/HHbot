@@ -71,7 +71,9 @@ const ScheduleModal: React.FC<
                 setDisabled(true);
             }
         };
-        getScheduledResponse();
+        if (resume_id) {
+            getScheduledResponse();
+        }
     }, [resume_id]);
 
     const { user } = useTypedSelector(state => state.User);
