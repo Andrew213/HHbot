@@ -34,6 +34,12 @@ export type vacancy = {
     alternate_url: string;
 };
 
+export type savedSearch = {
+    id: string;
+    name: string;
+    url: string;
+};
+
 export type VacnciesStateT = {
     items: vacancy[];
     loading: boolean;
@@ -44,4 +50,5 @@ export type VacnciesStateT = {
     errMsg?: string;
     found: number;
     responseIds: Set<string>;
+    savedSearch?: savedSearch;
 };

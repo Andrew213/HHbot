@@ -15,6 +15,8 @@ export const VacanciesReducer = (
             return { ...state, ...action.payload, loading: false };
         case VacanciesType.ERROR_VACANCIES:
             return { ...state, errMsg: action.errMsg };
+        case VacanciesType.GET_SAVED_SEARCH:
+            return { ...state, savedSearch: action.savedSearch };
         case VacanciesType.BEEN_RESPONDED:
             const copy = new Set(state.responseIds);
             copy.add(action.resume_id);

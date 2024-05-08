@@ -10,19 +10,32 @@ import { Box } from '@mui/material';
 import { useSearch } from '../Search/SearchContext';
 import useWindowSize from '@/hooks/useWondowResize';
 
-const VacanciesList: React.FC<{
+type VacanciesListT = {
     message: string;
     resume_id: string;
     breakpoint_md: number;
+    savedSearchUrl: string | null;
     setErrMsg: (a: string) => void;
-}> = ({ message, resume_id, breakpoint_md, setErrMsg }) => {
+};
+
+const VacanciesList: React.FC<VacanciesListT> = ({
+    message,
+    resume_id,
+    breakpoint_md,
+    setErrMsg,
+    savedSearchUrl
+}) => {
     const { loading, items, pages, found } = useTypedSelector(
         state => state.Vacancies
     );
 
     const { searchValue, currentPage, setCurrentPage } = useSearch();
 
-    const { getSimilarVacancies, searchAllVacancies } = useAction();
+    const {
+        getSimilarVacancies,
+        searchAllVacancies
+        // getVacanciesBySavedSearch
+    } = useAction();
 
     const sizeMap = useRef({});
     const listRef: any = useRef();
@@ -42,6 +55,14 @@ const VacanciesList: React.FC<{
         }
     }, [resume_id]);
 
+    // useEffect(() => {
+    //     if (resume_id && !savedSearchUrl) {
+    //         getSimilarVacancies(resume_id, 0);
+    //     } else {
+    //         getVacanciesBySavedSearch(savedSearchUrl as string, 0);
+    //     }
+    // }, [resume_id, savedSearchUrl]);
+
     const isItemLoaded = index => !!items[index];
 
     const loadMoreItems = (startIndex, stopIndex) => {
@@ -51,6 +72,13 @@ const VacanciesList: React.FC<{
             } else if (resume_id) {
                 getSimilarVacancies(resume_id, currentPage);
             }
+            // if (searchValue) {
+            //     searchAllVacancies(searchValue, currentPage);
+            // } else if (resume_id) {
+            //     savedSearchUrl
+            //         ? getVacanciesBySavedSearch(savedSearchUrl, currentPage)
+            //         : getSimilarVacancies(resume_id, currentPage);
+            // }
             setCurrentPage(prev => prev + 1);
         }
 

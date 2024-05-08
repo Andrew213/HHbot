@@ -1,5 +1,7 @@
 import {
     Alert,
+    Autocomplete,
+    Box,
     Button,
     Grid,
     Snackbar,
@@ -19,8 +21,7 @@ import { ProvideSearchContext } from './components/Search/SearchContext';
 import Search from './components/Search/Search';
 import { api } from '@/api';
 import { ROUTES } from '@/routes';
-import axios from 'axios';
-import DateTimePicker from '@/components/DateTimePicker/DateTimePicker';
+import SavedSearchSelect from './components/savedSearchSelect/SavedSearchSelect';
 
 const breakpoint_md = 900;
 const breakpoint_sm = 500;
@@ -28,19 +29,21 @@ const breakpoint_sm = 500;
 const Main = () => {
     const navigate = useNavigate();
 
-    const [message, setMessage] = useState<string>('');
+    const [message, setMessage] = useState('');
 
-    const [autoResponseStart, setAutoResponseStart] = useState<boolean>(false);
+    const [autoResponseStart, setAutoResponseStart] = useState(false);
 
     const { addToResponseArray } = useAction();
 
-    const [resume_id, setResumeId] = useState<string>('');
+    const [resume_id, setResumeId] = useState('');
 
     const [searchParams] = useSearchParams();
 
-    const [errMsg, setErrMsg] = useState<string>('');
+    const [errMsg, setErrMsg] = useState('');
 
-    const { items, responseIds } = useTypedSelector(state => state.Vacancies);
+    const { items, responseIds, savedSearch } = useTypedSelector(
+        state => state.Vacancies
+    );
 
     const { isAuth } = useTypedSelector(state => state.Login);
 
@@ -136,20 +139,7 @@ const Main = () => {
         };
     }, [items, autoResponseStart]);
 
-    const [width, height] = useWindowSize();
-
-    const {
-        user: { id }
-    } = useTypedSelector(state => state.User);
-    const handleAdd = async () => {
-        const response = await axios.post(
-            'http://localhost:5000/api/schedule',
-            {
-                userId: id
-            }
-        );
-        console.log(`response `, response);
-    };
+    const [width] = useWindowSize();
 
     return (
         <ProvideSearchContext>
@@ -232,6 +222,7 @@ const Main = () => {
                         breakpoint_md={breakpoint_md}
                         resume_id={resume_id}
                         message={message}
+                        savedSearchUrl={savedSearch?.url || null}
                         setErrMsg={setErrMsg}
                     />
                 </Grid>

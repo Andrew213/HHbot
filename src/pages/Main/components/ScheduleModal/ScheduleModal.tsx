@@ -1,10 +1,12 @@
 import {
     Alert,
+    Checkbox,
     Dialog,
     DialogActions,
     DialogContent,
     DialogProps,
     DialogTitle,
+    FormControlLabel,
     IconButton,
     Snackbar,
     TextField,
@@ -16,45 +18,52 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import CloseIcon from '@mui/icons-material/Close';
 import { useEffect, useState } from 'react';
 import { LoadingButton } from '@mui/lab';
-import HelpOutlineSharpIcon from '@mui/icons-material/HelpOutlineSharp';
 
 import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
 import { api } from '@/api';
 import { useTypedSelector } from '@/hooks/useTypedSelector';
 import { useSearchParams } from 'react-router-dom';
+import { HelpOutlineSharp } from '@mui/icons-material';
+import SavedSearchSelect from '../savedSearchSelect/SavedSearchSelect';
+import { useDispatch } from 'react-redux';
 
 const ScheduleModal: React.FC<
     Omit<DialogProps, 'children'> & {
         setAreResponsesScheduled: (a: boolean) => void;
     }
 > = props => {
-    const [open, setIsOpen] = useState(false);
     const [time, setTime] = useState<dayjs.Dayjs | null>(dayjs());
 
-    const [count, setCount] = useState<string>('1');
+    const { savedSearch } = useTypedSelector(state => state.Vacancies);
 
-    const [message, setMessage] = useState<string>('');
+    const [count, setCount] = useState('1');
 
-    const [search, setSearch] = useState<string>();
+    const [message, setMessage] = useState('');
 
-    const [resume_id, setResumeId] = useState<string>('');
+    const [search] = useState();
 
-    const [disabled, setDisabled] = useState<boolean>(false);
+    const [resume_id, setResumeId] = useState('');
 
-    const [notificationOpen, setNotificationOpen] = useState<boolean>(false);
+    const [disabled, setDisabled] = useState(false);
+
+    const [notificationOpen, setNotificationOpen] = useState(false);
 
     const [searchParams] = useSearchParams();
+
+    const dispatch = useDispatch();
+
+    // const [savedSearch, setSavedSearch] = useState(true);
+
+    // useEffect(() => {
+    //     setSavedSearchEnable(!!savedSearch);
+    // }, [savedSearch]);
 
     useEffect(() => {
         if (searchParams.has('resume')) {
             setResumeId(searchParams.get('resume') as string);
         }
     }, [searchParams]);
-
-    useEffect(() => {
-        setIsOpen(props.open);
-    }, [props.open]);
 
     useEffect(() => {
         props.setAreResponsesScheduled(disabled);
@@ -65,6 +74,12 @@ const ScheduleModal: React.FC<
             const { data } = await api.get(`/api/schedule/${resume_id}`);
             if (data.data) {
                 const { count, hours, minutes, message } = data.data;
+                if (data.data.savedSearch) {
+                    dispatch({
+                        type: 'GET_SAVED_SEARCH',
+                        savedSearch: data.data.savedSearch
+                    });
+                }
                 setTime(dayjs().set('hour', hours).set('minute', minutes));
                 setCount(count);
                 setMessage(message);
@@ -101,7 +116,8 @@ const ScheduleModal: React.FC<
             message,
             search,
             resume_id,
-            email: user.email
+            email: user.email,
+            savedSearch: savedSearch || undefined
         });
 
         if (response.status === 200) {
@@ -146,7 +162,7 @@ const ScheduleModal: React.FC<
                     }
                 }}
                 {...props}
-                open={open}
+                open={props.open}
             >
                 <DialogTitle
                     sx={{
@@ -162,7 +178,6 @@ const ScheduleModal: React.FC<
                             right: 0
                         }}
                         onClick={e => {
-                            setIsOpen(false);
                             if (props.onClose) {
                                 props.onClose(e, 'escapeKeyDown');
                             }
@@ -225,29 +240,40 @@ const ScheduleModal: React.FC<
                         margin="normal"
                         label="Сопроводительное"
                     />
-                    <TextField
-                        autoFocus
-                        fullWidth
+                    <SavedSearchSelect
                         disabled={disabled}
-                        margin="normal"
-                        value={search}
-                        onChange={e => setSearch(e.target.value)}
-                        label="Ключевые слова"
-                        InputProps={{
-                            endAdornment: (
-                                <Tooltip
-                                    title="
-Без этой строки отклики будут отправляться на наиболее подходящие вакансии к резюме. Как на главной странице.
-В это поле можно вставить поисковый запрос и тогда запланированные отклики будут отправлять на найденные по этой строке вакансии.
-"
-                                >
-                                    <IconButton>
-                                        <HelpOutlineSharpIcon />
-                                    </IconButton>
-                                </Tooltip>
-                            )
-                        }}
+                        defaultValue={savedSearch}
                     />
+                    {/* {savedSearch && (
+                        <FormControlLabel
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'start',
+                                margin: 0
+                            }}
+                            control={
+                                <>
+                                    <Checkbox
+                                        defaultChecked
+                                        checked={savedSearchEnable}
+                                        onChange={e =>
+                                            setSavedSearchEnable(
+                                                e.target.checked
+                                            )
+                                        }
+                                    />
+                                    <Tooltip title="Выберите или создайте сохранённый поиск на главной странице">
+                                        <IconButton size="small">
+                                            <HelpOutlineSharp fontSize="inherit" />
+                                        </IconButton>
+                                    </Tooltip>
+                                </>
+                            }
+                            label="Применить выбранный сохранённый поиск"
+                            labelPlacement="start"
+                        />
+                    )} */}
+
                     <DialogActions>
                         <LoadingButton
                             type="submit"

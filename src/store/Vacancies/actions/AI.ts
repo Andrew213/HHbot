@@ -1,4 +1,4 @@
-import { VacnciesStateT } from '../VacanciesStore';
+import { VacnciesStateT, savedSearch } from '../VacanciesStore';
 import { VacanciesType } from './AT';
 
 export interface REQUEST_VACANCIES {
@@ -16,6 +16,11 @@ export interface ERROR_VACANCIES {
     errMsg: string;
 }
 
+export interface GET_SAVED_SEARCH {
+    type: VacanciesType.GET_SAVED_SEARCH;
+    savedSearch: savedSearch;
+}
+
 export interface BEEN_RESPONDED {
     type: VacanciesType.BEEN_RESPONDED;
     resume_id: string;
@@ -25,4 +30,5 @@ export type VacanciesActionI =
     | REQUEST_VACANCIES
     | RECEIVE_VACANCIES
     | BEEN_RESPONDED
-    | ERROR_VACANCIES;
+    | ERROR_VACANCIES
+    | GET_SAVED_SEARCH;
