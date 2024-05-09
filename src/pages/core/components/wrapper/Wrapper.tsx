@@ -1,10 +1,10 @@
-import NoSsr from '@mui/material/NoSsr';
-import AppRouter from '@/routers';
+import ErrorBoundary from "@/components/error-boundry/ErrorBoundry";
+import AppRouter from "@/routers";
 const Wrapper = () => {
-    return (
-        <NoSsr>
-            <AppRouter />
-        </NoSsr>
-    );
+  return (
+    <ErrorBoundary>
+      <AppRouter />
+    </ErrorBoundary>
+  );
 };
 export default Wrapper;
