@@ -16,14 +16,14 @@ import {
   styled,
   Typography,
 } from "@mui/material";
-import {AxiosError} from "axios";
-import {memo, useEffect, useRef, useState} from "react";
+import {useUnit} from "effector-react";
+import {memo, useEffect, useRef} from "react";
 
-import {api} from "@/api";
-import useAction from "@/hooks/useAction";
-import {useTypedSelector} from "@/hooks/useTypedSelector";
 import useWindowSize from "@/hooks/useWondowResize";
 import {vacancy} from "@/store/Vacancies/VacanciesStore";
+
+import {$resumes} from "../SelectResume/model";
+import {$vacancies, sendNegotiationFx} from "../VacanciesList/model";
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const Item = styled(Paper)(({theme}) => ({
@@ -103,24 +103,19 @@ const VacancyItem: React.FC<
   setSize,
   index,
   has_test,
-  setErrMsg,
   response_letter_required,
 }) => {
-  const {
-    user: {resumeList},
-  } = useTypedSelector(state => state.User);
-
-  const {responseIds} = useTypedSelector(state => state.Vacancies);
-
-  const [respondLoading, setRespondLoading] = useState<boolean>(false);
-
-  const {addToResponseArray} = useAction();
+  const [resumeList, {responseIds}, sendNegotiation, respondLoading] = useUnit([
+    $resumes,
+    $vacancies,
+    sendNegotiationFx,
+    sendNegotiationFx.pending,
+  ]);
 
   const [width] = useWindowSize();
 
-  const onRespondHandler = async (vacancy_id: string) => {
+  const onRespondHandler = (vacancy_id: string) => {
     if (resumeList) {
-      setRespondLoading(true);
       const data: {
         vacancy_id: string;
         resume_id: string;
@@ -132,19 +127,7 @@ const VacancyItem: React.FC<
       if (message) {
         data.message = message;
       }
-      try {
-        const response = await api.post("/api/vacancies/negotiations", data);
-
-        if (response.status === 201) {
-          addToResponseArray(id);
-        }
-      } catch (err: unknown) {
-        if (err instanceof AxiosError) {
-          const errData = err.response?.data as {description: string};
-          setErrMsg(errData.description);
-        }
-      }
-      setRespondLoading(false);
+      sendNegotiation({data, id});
     }
   };
 
@@ -255,7 +238,7 @@ const VacancyItem: React.FC<
                   responseIds.has(id) || (!message && response_letter_required)
                 }
                 onClick={() => {
-                  void onRespondHandler(id);
+                  onRespondHandler(id);
                 }}
                 size={width <= breakpoint_sm ? "small" : "medium"}
                 sx={{minWidth: "127px"}}>

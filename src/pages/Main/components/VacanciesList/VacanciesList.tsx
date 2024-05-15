@@ -1,4 +1,5 @@
 import {Box} from "@mui/material";
+import {useUnit} from "effector-react";
 import {memo, useCallback, useEffect, useRef} from "react";
 import AutoSizer from "react-virtualized-auto-sizer";
 import {VariableSizeList as List} from "react-window";
@@ -6,18 +7,16 @@ import InfiniteLoader from "react-window-infinite-loader";
 import {CSSProperties} from "styled-components";
 
 import Spiner from "@/components/Spinner/Spiner";
-import useAction from "@/hooks/useAction";
-import {useTypedSelector} from "@/hooks/useTypedSelector";
 import useWindowSize from "@/hooks/useWondowResize";
 
 import {useSearch} from "../Search/SearchContext";
 import VacancyItem from "../VacancyItem/VacancyItem";
+import {$vacancies, getVacanciesFx, searchVacanciesFx} from "./model";
 
 type VacanciesListT = {
   message: string;
   resume_id: string;
   breakpoint_md: number;
-  savedSearchUrl: string | null;
   setErrMsg: (a: string) => void;
 };
 
@@ -27,13 +26,21 @@ const VacanciesList: React.FC<VacanciesListT> = ({
   breakpoint_md,
   setErrMsg,
 }) => {
-  const {loading, items, pages, found} = useTypedSelector(
-    state => state.Vacancies,
-  );
-
   const {searchValue, currentPage, setCurrentPage} = useSearch();
 
-  const {getSimilarVacancies, searchAllVacancies} = useAction();
+  const [
+    {items, pages, found},
+    getVacancies,
+    loading,
+    searchVacancies,
+    searchLoading,
+  ] = useUnit([
+    $vacancies,
+    getVacanciesFx,
+    getVacanciesFx.pending,
+    searchVacanciesFx,
+    searchVacanciesFx.pending,
+  ]);
 
   const sizeMap = useRef<Record<string, number>>({});
   type VirtualListRef = {
@@ -52,26 +59,18 @@ const VacanciesList: React.FC<VacanciesListT> = ({
 
   useEffect(() => {
     if (resume_id) {
-      getSimilarVacancies(resume_id, 0);
+      getVacancies({resume_id, page: 0});
     }
-  }, [resume_id]);
-
-  // useEffect(() => {
-  //     if (resume_id && !savedSearchUrl) {
-  //         getSimilarVacancies(resume_id, 0);
-  //     } else {
-  //         getVacanciesBySavedSearch(savedSearchUrl as string, 0);
-  //     }
-  // }, [resume_id, savedSearchUrl]);
+  }, [resume_id, getVacancies]);
 
   const isItemLoaded = (index: string) => !!items[index];
 
   const loadMoreItems = () => {
     if (currentPage <= pages) {
       if (searchValue) {
-        searchAllVacancies(searchValue, currentPage);
+        searchVacancies({text: searchValue, page: currentPage});
       } else if (resume_id) {
-        getSimilarVacancies(resume_id, currentPage);
+        getVacancies({resume_id, page: currentPage});
       }
       // if (searchValue) {
       //     searchAllVacancies(searchValue, currentPage);
@@ -99,13 +98,13 @@ const VacanciesList: React.FC<VacanciesListT> = ({
     heightOfHeader = 165;
   }
 
-  if (loading) {
+  if ((loading || searchLoading) && currentPage === 1) {
     return (
       <Box
         display="flex"
         alignItems="center"
         justifyContent="center"
-        height={`calc(${height} - ${heightOfHeader}px)`}>
+        height={`calc(${height}px - ${heightOfHeader}px - 5px)`}>
         <Spiner />
       </Box>
     );

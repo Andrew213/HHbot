@@ -1,26 +1,26 @@
 import {Button, Grid, Typography} from "@mui/material";
+import {useUnit} from "effector-react";
 import {useEffect} from "react";
 import {createSearchParams, useNavigate} from "react-router-dom";
 
 import Spiner from "@/components/Spinner/Spiner";
-import useAction from "@/hooks/useAction";
-import {useTypedSelector} from "@/hooks/useTypedSelector";
+import {$login} from "@/pages/Login/model";
+
+import {$resumes, getResumesFx} from "./model";
 
 const SelectResume: React.FC = () => {
-  const {
-    user: {resumeList},
-    loading,
-  } = useTypedSelector(state => state.User);
-
-  const {getResume} = useAction();
-
-  const {isAuth} = useTypedSelector(state => state.Login);
+  const [{isAuth}, resumeList, getResumes, loading] = useUnit([
+    $login,
+    $resumes,
+    getResumesFx,
+    getResumesFx.pending,
+  ]);
 
   const navigate = useNavigate();
 
   useEffect(() => {
     if (isAuth) {
-      getResume();
+      getResumes();
     }
   }, [isAuth]);
 
@@ -50,7 +50,7 @@ const SelectResume: React.FC = () => {
       gap={5}>
       <Typography variant="h5">Выберите резюме</Typography>
 
-      {resumeList &&
+      {resumeList?.length &&
         resumeList.map(({id, title}) => (
           <Button
             onClick={() => {

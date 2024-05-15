@@ -7,20 +7,20 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import {AxiosError} from "axios";
+import {useUnit} from "effector-react";
 import {useCallback, useEffect, useState} from "react";
 import {useNavigate, useSearchParams} from "react-router-dom";
 
-import {api} from "@/api";
-import useAction from "@/hooks/useAction";
-import {useTypedSelector} from "@/hooks/useTypedSelector";
 import useWindowSize from "@/hooks/useWondowResize";
-import {ROUTES} from "@/routes";
+import {ROUTES} from "@/utils/router/routes";
 
+import {$login} from "../Login/model";
 import Header from "./components/Header/Header";
 import Search from "./components/Search/Search";
 import {ProvideSearchContext} from "./components/Search/SearchContext";
+import {$vacancies, sendNegotiationFx} from "./components/VacanciesList/model";
 import VacanciesList from "./components/VacanciesList/VacanciesList";
+import {getUserFx} from "./model";
 
 const breakpoint_md = 900;
 const breakpoint_sm = 500;
@@ -32,21 +32,24 @@ const Main = () => {
 
   const [autoResponseStart, setAutoResponseStart] = useState(false);
 
-  const {addToResponseArray} = useAction();
-
   const [resume_id, setResumeId] = useState("");
 
   const [searchParams] = useSearchParams();
 
   const [errMsg, setErrMsg] = useState("");
 
-  const {items, responseIds, savedSearch} = useTypedSelector(
-    state => state.Vacancies,
-  );
-
-  const {isAuth} = useTypedSelector(state => state.Login);
-
   const [counter, setCounter] = useState(0);
+
+  const [getUser, {isAuth}, {items, responseIds}, sendNegotiation] = useUnit([
+    getUserFx,
+    $login,
+    $vacancies,
+    sendNegotiationFx,
+  ]);
+
+  useEffect(() => {
+    getUser();
+  }, []);
 
   useEffect(() => {
     if (isAuth && !searchParams.has("resume")) {
@@ -86,24 +89,13 @@ const Main = () => {
           ((response_letter_required && message) || !response_letter_required)
         ) {
           try {
-            const response = await api.post(
-              "/api/vacancies/negotiations",
-              data,
-            );
+            const id = await sendNegotiation({data, id: vacancy_id});
 
-            if (response.status === 201) {
-              addToResponseArray(vacancy_id);
+            if (id) {
               setCounter(prev => prev + 1);
             }
           } catch (err: unknown) {
-            if (err instanceof AxiosError) {
-              const errData = err.response?.data as {
-                description: string;
-              };
-
-              setErrMsg(errData?.description);
-              setAutoResponseStart(false);
-            }
+            setAutoResponseStart(false);
           }
         }
       }
@@ -218,7 +210,6 @@ const Main = () => {
             breakpoint_md={breakpoint_md}
             resume_id={resume_id}
             message={message}
-            savedSearchUrl={savedSearch?.url || null}
             setErrMsg={setErrMsg}
           />
         </Grid>

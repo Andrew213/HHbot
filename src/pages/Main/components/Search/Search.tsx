@@ -1,20 +1,25 @@
 import ClearIcon from "@mui/icons-material/Clear";
 import SearchIcon from "@mui/icons-material/Search";
 import {Box, IconButton, TextField, Typography} from "@mui/material";
+import {useUnit} from "effector-react";
 import {useState} from "react";
 import {useSearchParams} from "react-router-dom";
 
-import useAction from "@/hooks/useAction";
-import {useTypedSelector} from "@/hooks/useTypedSelector";
-
+import {
+  $vacancies,
+  getVacanciesFx,
+  searchVacanciesFx,
+} from "../VacanciesList/model";
 import {useSearch} from "./SearchContext";
 
 const Search: React.FC = () => {
   const {searchValue, setSearchValue, setCurrentPage} = useSearch();
 
-  const {found} = useTypedSelector(state => state.Vacancies);
-
-  const {searchAllVacancies, getSimilarVacancies} = useAction();
+  const [{found}, searchVacancies, getVacancies] = useUnit([
+    $vacancies,
+    searchVacanciesFx,
+    getVacanciesFx,
+  ]);
 
   const [searchParams] = useSearchParams();
 
@@ -23,10 +28,10 @@ const Search: React.FC = () => {
   const handleOnSearch = () => {
     if (searchValue) {
       setWasFound(true);
-      searchAllVacancies(searchValue.trim(), 0);
+      searchVacancies({text: searchValue.trim(), page: 0});
     } else if (searchParams.has("resume")) {
       setWasFound(false);
-      getSimilarVacancies(searchParams.get("resume") as string, 0);
+      getVacancies({resume_id: searchParams.get("resume") as string, page: 0});
     }
     setCurrentPage(1);
   };
@@ -34,7 +39,7 @@ const Search: React.FC = () => {
   const handleOnClear = () => {
     setWasFound(false);
     setSearchValue("");
-    getSimilarVacancies(searchParams.get("resume") as string, 0);
+    getVacancies({resume_id: searchParams.get("resume") as string, page: 0});
     setCurrentPage(1);
   };
 

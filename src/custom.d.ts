@@ -1,7 +1,7 @@
 interface ImportMetaEnv {
-    [key: string]: string;
+  [key: string]: string;
 }
 
 interface ImportMeta {
-    env: ImportMetaEnv;
+  env: ImportMetaEnv;
 }

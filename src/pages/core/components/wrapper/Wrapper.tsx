@@ -1,5 +1,5 @@
 import ErrorBoundary from "@/components/error-boundry/ErrorBoundry";
-import AppRouter from "@/routers";
+import AppRouter from "@/utils/router/routers";
 const Wrapper = () => {
   return (
     <ErrorBoundary>
