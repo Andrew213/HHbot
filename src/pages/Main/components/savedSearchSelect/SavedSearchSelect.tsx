@@ -4,9 +4,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import {Autocomplete, Button, TextField} from "@mui/material";
 import {useEffect, useState} from "react";
-import {useDispatch} from "react-redux";
 
-import {api} from "@/api";
+import {api} from "@/api/api";
+
+import {setSavedSearch} from "./model";
 
 type savedSearch = {
   id: string;
@@ -16,7 +17,7 @@ type savedSearch = {
 
 type SavedSearchSelectT = {
   disabled?: boolean;
-  defaultValue?: savedSearch;
+  defaultValue?: savedSearch | null;
 };
 
 const SavedSearchSelect: React.FC<SavedSearchSelectT> = ({
@@ -28,8 +29,6 @@ const SavedSearchSelect: React.FC<SavedSearchSelectT> = ({
   const [open, setOpen] = useState(false);
 
   const [loading, setLoading] = useState(false);
-
-  const dispatch = useDispatch();
 
   useEffect(() => {
     const getSaveSearches = async () => {
@@ -56,7 +55,7 @@ const SavedSearchSelect: React.FC<SavedSearchSelectT> = ({
       getOptionLabel={option => option.name}
       options={savedSearches || []}
       onChange={(_event: unknown, savedSearch: savedSearch) => {
-        dispatch({type: "GET_SAVED_SEARCH", savedSearch});
+        setSavedSearch(savedSearch);
       }}
       onOpen={() => setOpen(true)}
       onClose={() => setOpen(false)}

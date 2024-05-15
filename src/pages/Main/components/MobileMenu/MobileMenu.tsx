@@ -7,9 +7,10 @@ import {
   MenuItem,
   TextField,
 } from "@mui/material";
+import {useUnit} from "effector-react";
 import {useMemo, useState} from "react";
 
-import {useTypedSelector} from "@/hooks/useTypedSelector";
+import {$resumes} from "../SelectResume/model";
 
 interface MobileMenuI {
   resume_id: string;
@@ -24,9 +25,7 @@ const MobileMenu: React.FC<MobileMenuI> = ({
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>();
 
-  const {
-    user: {resumeList},
-  } = useTypedSelector(state => state.User);
+  const [resumeList] = useUnit([$resumes]);
 
   const handleOnMenuClick = (e: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(e.currentTarget);

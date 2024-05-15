@@ -19,13 +19,14 @@ import {
 import {LocalizationProvider, TimePicker} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import {useUnit} from "effector-react";
 import {useEffect, useState} from "react";
-import {useDispatch} from "react-redux";
 import {useSearchParams} from "react-router-dom";
 
-import {api} from "@/api";
-import {useTypedSelector} from "@/hooks/useTypedSelector";
+import {createSchedule, deleteSchedulte, getSchedule} from "@/api/Schedule";
 
+import {$user} from "../../model";
+import {$savedSearch, setSavedSearch} from "../savedSearchSelect/model";
 import SavedSearchSelect from "../savedSearchSelect/SavedSearchSelect";
 
 const ScheduleModal: React.FC<
@@ -35,7 +36,7 @@ const ScheduleModal: React.FC<
 > = props => {
   const [time, setTime] = useState<dayjs.Dayjs | null>(dayjs());
 
-  const {savedSearch} = useTypedSelector(state => state.Vacancies);
+  const [savedSearch, user] = useUnit([$savedSearch, $user]);
 
   const [count, setCount] = useState(1);
 
@@ -51,14 +52,6 @@ const ScheduleModal: React.FC<
 
   const [searchParams] = useSearchParams();
 
-  const dispatch = useDispatch();
-
-  // const [savedSearch, setSavedSearch] = useState(true);
-
-  // useEffect(() => {
-  //     setSavedSearchEnable(!!savedSearch);
-  // }, [savedSearch]);
-
   useEffect(() => {
     if (searchParams.has("resume")) {
       setResumeId(searchParams.get("resume") as string);
@@ -71,22 +64,15 @@ const ScheduleModal: React.FC<
 
   useEffect(() => {
     const getScheduledResponse = async () => {
-      const {data} = await api.get(`/api/schedule/${resume_id}`);
-      if (data.data) {
-        const {count, hours, minutes, message} = data.data;
-        if (data.data.savedSearch) {
-          dispatch({
-            type: "GET_SAVED_SEARCH",
-            savedSearch: data.data.savedSearch,
-          });
+      const response = await getSchedule(resume_id);
+      if (response) {
+        const {count, hours, minutes, message} = response;
+        if (response.savedSearch) {
+          setSavedSearch(response.savedSearch);
         }
-        setTime(
-          dayjs()
-            .set("hour", hours as number)
-            .set("minute", minutes as number),
-        );
-        setCount(count as number);
-        setMessage(message as string);
+        setTime(dayjs().set("hour", hours).set("minute", minutes));
+        setCount(count);
+        setMessage(message);
         setDisabled(true);
       }
     };
@@ -94,8 +80,6 @@ const ScheduleModal: React.FC<
       void getScheduledResponse();
     }
   }, [resume_id]);
-
-  const {user} = useTypedSelector(state => state.User);
 
   const onChageCount = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -113,18 +97,18 @@ const ScheduleModal: React.FC<
   const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const response = await api.post("/api/schedule", {
+    const isScheduled = await createSchedule({
       hours: dayjs(time).format("HH"),
       minutes: dayjs(time).format("mm"),
       count,
       message,
       search,
       resume_id,
-      email: user.email,
+      email: user ? user.email : "",
       savedSearch: savedSearch || undefined,
     });
 
-    if (response.status === 200) {
+    if (isScheduled) {
       setDisabled(true);
       setNotificationOpen(true);
     }
@@ -132,8 +116,8 @@ const ScheduleModal: React.FC<
 
   const handleOnCancel = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const response = await api.delete(`/api/schedule/${resume_id}`);
-    if (response.status === 200) {
+    const deleted = await deleteSchedulte(resume_id);
+    if (deleted) {
       setDisabled(false);
       setNotificationOpen(true);
     }
@@ -231,35 +215,6 @@ const ScheduleModal: React.FC<
             label="Сопроводительное"
           />
           <SavedSearchSelect disabled={disabled} defaultValue={savedSearch} />
-          {/* {savedSearch && (
-                        <FormControlLabel
-                            sx={{
-                                display: 'flex',
-                                justifyContent: 'start',
-                                margin: 0
-                            }}
-                            control={
-                                <>
-                                    <Checkbox
-                                        defaultChecked
-                                        checked={savedSearchEnable}
-                                        onChange={e =>
-                                            setSavedSearchEnable(
-                                                e.target.checked
-                                            )
-                                        }
-                                    />
-                                    <Tooltip title="Выберите или создайте сохранённый поиск на главной странице">
-                                        <IconButton size="small">
-                                            <HelpOutlineSharp fontSize="inherit" />
-                                        </IconButton>
-                                    </Tooltip>
-                                </>
-                            }
-                            label="Применить выбранный сохранённый поиск"
-                            labelPlacement="start"
-                        />
-                    )} */}
 
           <DialogActions>
             <LoadingButton

@@ -54,6 +54,7 @@ module.exports = {
     "simple-import-sort/imports": "error",
     "simple-import-sort/exports": "error",
     quotes: ["error", "double"],
+    "@typescript-eslint/no-floating-promises": "off",
     "@typescript-eslint/no-unused-vars": [
       "error",
       {
