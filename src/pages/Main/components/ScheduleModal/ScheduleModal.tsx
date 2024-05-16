@@ -6,6 +6,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import {LoadingButton} from "@mui/lab";
 import {
   Alert,
+  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -228,6 +229,14 @@ const ScheduleModal: React.FC<
               color={disabled ? "error" : "success"}>
               {disabled ? "Закончить рассылку" : "Запланировать"}
             </LoadingButton>
+            <Button
+              onClick={e => {
+                if (props.onClose) {
+                  props.onClose(e, "escapeKeyDown");
+                }
+              }}>
+              Отмена
+            </Button>
           </DialogActions>
         </DialogContent>
       </Dialog>

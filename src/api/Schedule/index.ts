@@ -1,5 +1,3 @@
-import {savedSearch} from "@/store/Vacancies/VacanciesStore";
-
 import {api, errorHandler} from "../api";
 
 export const createSchedule = async data => {
@@ -9,6 +7,12 @@ export const createSchedule = async data => {
   } catch (error) {
     errorHandler(error);
   }
+};
+
+export type savedSearch = {
+  id: string;
+  name: string;
+  url: string;
 };
 
 type scheduleT = {

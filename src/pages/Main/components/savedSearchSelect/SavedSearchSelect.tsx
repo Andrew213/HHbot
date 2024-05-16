@@ -2,7 +2,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import {Autocomplete, Button, TextField} from "@mui/material";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import {Autocomplete, Button, IconButton, TextField} from "@mui/material";
 import {useEffect, useState} from "react";
 
 import {api} from "@/api/api";
@@ -79,13 +80,12 @@ const SavedSearchSelect: React.FC<SavedSearchSelectT> = ({
             ...params.InputProps,
             endAdornment: (
               <>
-                <Button
+                <IconButton
                   size="small"
-                  variant="text"
                   target="_blank"
                   href="https://hh.ru/article/14">
-                  Подробнее
-                </Button>
+                  <HelpOutlineIcon />
+                </IconButton>
                 {params.InputProps.endAdornment}
               </>
             ),
