@@ -50,7 +50,6 @@ export const getSimilarVacancies = async ({
       `/api/vacancies?resume_id=${resume_id}&page=${page}`,
     );
     return response.data;
-    // остановился тут. ПЕРЕНЕСТИ ЛОГИКУ С ВАКАНСИЯМИ ЧЕРЕЗ EFFECTOR
   } catch (error) {
     errorHandler(error);
   }

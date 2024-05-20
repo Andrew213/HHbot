@@ -17,10 +17,10 @@ import {
   Typography,
 } from "@mui/material";
 import {useUnit} from "effector-react";
-import {memo, useEffect, useRef} from "react";
+import {memo, useEffect, useRef, useState} from "react";
 
+import {vacancy} from "@/api/Vacancies";
 import useWindowSize from "@/hooks/useWondowResize";
-import {vacancy} from "@/store/Vacancies/VacanciesStore";
 
 import {$resumes} from "../SelectResume/model";
 import {$vacancies, sendNegotiationFx} from "../VacanciesList/model";
@@ -105,16 +105,17 @@ const VacancyItem: React.FC<
   has_test,
   response_letter_required,
 }) => {
-  const [resumeList, {responseIds}, sendNegotiation, respondLoading] = useUnit([
+  const [resumeList, {responseIds}, sendNegotiation] = useUnit([
     $resumes,
     $vacancies,
     sendNegotiationFx,
-    sendNegotiationFx.pending,
   ]);
+
+  const [loading, setLoading] = useState(false);
 
   const [width] = useWindowSize();
 
-  const onRespondHandler = (vacancy_id: string) => {
+  const onRespondHandler = async (vacancy_id: string) => {
     if (resumeList) {
       const data: {
         vacancy_id: string;
@@ -127,7 +128,9 @@ const VacancyItem: React.FC<
       if (message) {
         data.message = message;
       }
-      sendNegotiation({data, id});
+      setLoading(true);
+      await sendNegotiation({data, id});
+      setLoading(false);
     }
   };
 
@@ -233,7 +236,7 @@ const VacancyItem: React.FC<
             ) : (
               <LoadingButton
                 variant="contained"
-                loading={respondLoading}
+                loading={loading}
                 disabled={
                   responseIds.has(id) || (!message && response_letter_required)
                 }
