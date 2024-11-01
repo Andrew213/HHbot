@@ -1,5 +1,5 @@
-import { memo } from 'react';
+import {memo} from "react";
 
-import Page from './Page';
+import Page from "./Page";
 
 export default memo(Page);

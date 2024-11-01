@@ -1,8 +1,8 @@
-import Wrapper from '../wrapper';
+import "@/styles/main.scss";
 
-import '@/styles/main.scss';
+import Wrapper from "../wrapper";
 
 const Page = () => {
-    return <Wrapper />;
+  return <Wrapper />;
 };
 export default Page;

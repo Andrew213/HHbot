@@ -1,5 +1,5 @@
-import { memo } from 'react';
+import {memo} from "react";
 
-import Wrapper from './Wrapper';
+import Wrapper from "./Wrapper";
 
 export default memo(Wrapper);
